@@ -34,6 +34,10 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
+nav{
+  position:absolute;
+  top: 1;
+}
 
 button {
   border-radius: 8px;
