@@ -1,9 +1,8 @@
-// src/pages/CarConfigurationPage.jsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5005'; // Replace with your backend API URL
+const API_URL = 'http://localhost:5005'; 
 
 function CarConfigurationPage() {
   const { carId } = useParams();
@@ -16,12 +15,11 @@ function CarConfigurationPage() {
     features: [],
     price: 0,
   });
-  const [featurePrices, setFeaturePrices] = useState({}); // Object to hold prices for each feature
+  const [featurePrices, setFeaturePrices] = useState({}); // This holds prices for each feature
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
-  // Fetch the car details when the component mounts
   useEffect(() => {
     const fetchCar = async () => {
       try {
@@ -30,7 +28,6 @@ function CarConfigurationPage() {
         if (response.data && response.data.car) {
           const carData = response.data.car;
 
-          // Set feature prices (example pricing, you may adjust these)
           const prices = {
             "Navigation": 1000,
             "Bluetooth": 500,
@@ -51,9 +48,8 @@ function CarConfigurationPage() {
 
           setFeaturePrices(prices);
 
-          // Pre-fill the form with existing car data, handling potential undefined values safely
-          setFormData({
-            engine: carData.engine?.[0] || '', // Safely access the first element
+          setFormData({  //adds data to the form
+            engine: carData.engine?.[0] || '', // This checks if some value exists if not then it keeps empty
             transmission: carData.transmission?.[0] || '',
             exteriorColor: carData.exteriorColor?.[0] || '',
             interiorColor: carData.interiorColor?.[0] || '',
@@ -61,7 +57,7 @@ function CarConfigurationPage() {
             price: carData.price || 0,
           });
 
-          setCar(carData); // Set the car data after successfully fetching it
+          setCar(carData); 
         } else {
           setErrorMessage('Car data not found.');
         }
@@ -74,7 +70,6 @@ function CarConfigurationPage() {
     fetchCar();
   }, [carId]);
 
-  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -194,13 +189,13 @@ function CarConfigurationPage() {
                 checked={formData.features.includes(feature)}
               />
               <label>
-                {feature} (+${featurePrices[feature] || 0})
+                {feature} (+€{featurePrices[feature] || 0})
               </label>
             </div>
           ))}
         </div>
 
-        <label>Total Price: ${formData.price.toFixed(2)}</label>
+        <label>Total Price: €{formData.price.toFixed(2)}</label>
 
         <button type="submit">Save Configuration</button>
       </form>

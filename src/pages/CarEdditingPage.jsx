@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const API_URL = 'http://localhost:5005'; // Replace with your backend API URL
 
-function CarCreationPage() {
+function CarEditingPage() {
+    const { carId } = useParams();
   const [formData, setFormData] = useState({
     make: '',
     model: '',
@@ -26,13 +27,49 @@ function CarCreationPage() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchCarDetails = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get(`${API_URL}/cars/${carId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Set formData with the fetched car details
+        setFormData({
+          make: response.data.make || '',
+          model: response.data.model || '',
+          year: response.data.year || '',
+          trim: response.data.trim || '',
+          engine: response.data.engine || '',
+          engineHorsepower: response.data.engineHorsepower || '',
+          transmission: response.data.transmission || '',
+          interiorColor: response.data.interiorColor || '',
+          exteriorColor: response.data.exteriorColor || '',
+          features: response.data.features.join(', ') || '',
+          price: response.data.price || '',
+          quantity: response.data.quantity || '',
+          location: response.data.location || '',
+          available: response.data.available || true,
+        });
+      } catch (error) {
+        console.error('Error fetching car details:', error);
+        setErrorMessage('Failed to load car details. Please try again later.');
+      }
+    };
+
+    fetchCarDetails();
+}, [carId]);
+
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: type === 'checkbox' ? checked : value,
-    });
+    }));
   };
 
   // Handle form submission
@@ -44,8 +81,8 @@ function CarCreationPage() {
     const token = localStorage.getItem('authToken')
 
     try {
-        const response = await axios.post(
-          `${API_URL}/admin/newCar`,
+        const response = await axios.put(
+          `${API_URL}/admin/cars/${carId}`,
           { carDetails: formData },
           {
             headers: {
@@ -55,7 +92,7 @@ function CarCreationPage() {
         );
     
         console.log('Car created:', response.data);
-        navigate('/cars'); 
+        navigate(`/cars/${carId}`); 
       } catch (error) {
         console.error('Error creating car:', error);
         if (error.response && error.response.data) {
@@ -69,8 +106,8 @@ function CarCreationPage() {
     };
 
   return (
-    <div className="CarCreationPage">
-      <h1>Create a New Car</h1>
+    <div>
+      <h1>Edit Car Details</h1>
       <form onSubmit={handleSubmit}>
         <label>Make:</label>
         <input type="text" name="make" value={formData.make} onChange={handleInputChange} required />
@@ -127,7 +164,7 @@ function CarCreationPage() {
         <input type="text" name="location" value={formData.location} onChange={handleInputChange} />
 
         <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Creating...' : 'Create Car'}
+          {isLoading ? 'Updating...' : 'Update Car'}
         </button>
       </form>
 
@@ -136,4 +173,4 @@ function CarCreationPage() {
   );
 }
 
-export default CarCreationPage;
+export default CarEditingPage;

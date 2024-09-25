@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import ReviewForm from '../components/ReviewForm';
+import Reviews from '../components/Reviews';
 
 const API_URL = 'http://localhost:5005'; 
 
@@ -46,6 +48,8 @@ function CarPage() {
       <p>Exterior Colors: {car.exteriorColor.join(', ')}</p>
       <p>Price: ${car.price}</p>
       <p>Features: {Array.isArray(car.features) ? car.features.join(', ') : 'No features available'}</p>
+        <ReviewForm />
+        <Reviews />
     </div>
   );
 }

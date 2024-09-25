@@ -7,7 +7,7 @@ const { Header, Content, Footer, Sider } = Layout;
 
 function Navbar() {
 
-  const { isLoggedIn, user, logOutUser } = useContext(AuthContext);   
+  const { isLoggedIn, logOutUser } = useContext(AuthContext);   
 
   return (
     <Layout>
@@ -20,7 +20,7 @@ function Navbar() {
       {isLoggedIn && (
         <>       
             <Link to="/dashboard"> <button>Profile</button> </Link>  
-          <button onClick={logOutUser}>Logout</button>
+            <button onClick={logOutUser}>Logout</button>
         </>
       )}
 

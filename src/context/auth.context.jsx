@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const API_URL = "http://localhost:5005";
 
 const AuthContext = React.createContext();
@@ -10,6 +11,8 @@ function AuthProviderWrapper(props) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate()
 
   
   const storeToken = (token) => {
@@ -34,20 +37,23 @@ function AuthProviderWrapper(props) {
        // Update state variables        
         setIsLoggedIn(true);
         setIsLoading(false);
-        setUser(user);        
+        setUser(user);  
+        setIsAdmin(user.isAdmin || false);      
       })
       .catch((error) => {
         // If the server sends an error response (invalid token) 
         // Update state variables         
         setIsLoggedIn(false);
         setIsLoading(false);
-        setUser(null);        
+        setUser(null);  
+        setIsAdmin(false);      
       });      
     } else {
       // If the token is not available (or is removed)
         setIsLoggedIn(false);
         setIsLoading(false);
-        setUser(null);      
+        setUser(null);  
+        setIsAdmin(false);    
     }   
   }
 
@@ -61,6 +67,7 @@ function AuthProviderWrapper(props) {
     removeToken();
     // and update the state variables    
     authenticateUser();
+    navigate('/')
   } 
 
   useEffect(() => {
@@ -74,6 +81,7 @@ function AuthProviderWrapper(props) {
         isLoggedIn,
         isLoading,
         user,
+        isAdmin,
         storeToken,
         authenticateUser,
         logOutUser

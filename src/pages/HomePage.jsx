@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";                     
-import VideoPlayer from "./HomePageComponents/VideoPlayer";
+import VideoPlayer from "../components/VideoPlayer";
 
 function HomePage() {
 
