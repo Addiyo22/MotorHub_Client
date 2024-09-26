@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../context/auth.context';
 
-const API_URL = 'http://localhost:5005'; 
+const API_URL = import.meta.env.REACT_APP_API_URL || 'http://localhost:5005'; 
 
 function Reviews() {
   const { carId } = useParams(); 

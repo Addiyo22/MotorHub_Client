@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const API_URL = 'http://localhost:5005'; // Replace with your backend API URL
+const API_URL = import.meta.env.REACT_APP_API_URL || 'http://localhost:5005'; // Replace with your backend API URL
 
 function CarEditingPage() {
     const { carId } = useParams();
