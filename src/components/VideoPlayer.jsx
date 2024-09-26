@@ -1,4 +1,3 @@
-
 function VideoPlayer() {
     const handleVideoError = () => {
         alert("Error loading video. Please check the file path or try a different browser.");

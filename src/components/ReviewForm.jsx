@@ -1,14 +1,11 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import { useContext } from 'react';
 import { AuthContext } from '../context/auth.context';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005'; 
 
-function ReviewForm() {
-  const { carId } = useParams(); // Get the car ID from the route parameters
-  const { user, isLoggedIn } = useContext(AuthContext); // Use the Auth context to check if the user is logged in
+function ReviewForm({ carId, refreshReviews }) {
+  const { user, isLoggedIn } = useContext(AuthContext);
   const [rating, setRating] = useState('');
   const [comment, setComment] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -31,7 +28,7 @@ function ReviewForm() {
 
     try {
       const token = localStorage.getItem('authToken');
-      const response = await axios.post(
+      await axios.post(
         `${API_URL}/cars/${carId}/reviews`,
         { rating, comment },
         {
@@ -44,6 +41,8 @@ function ReviewForm() {
       setSuccessMessage('Review submitted successfully!');
       setRating('');
       setComment('');
+
+      refreshReviews();
     } catch (error) {
       console.error('Error submitting review:', error);
       if (error.response && error.response.data) {

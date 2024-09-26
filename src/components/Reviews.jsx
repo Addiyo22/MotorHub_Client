@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../context/auth.context';
+import ReviewForm from './ReviewForm';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005'; 
 
@@ -13,19 +14,20 @@ function Reviews() {
   const [isLoading, setIsLoading] = useState(true);
   const { user, isLoggedIn } = useContext(AuthContext);
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/cars/${carId}/reviews`);
-        setReviews(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching reviews:', error);
-        setErrorMessage('Failed to load reviews. Please try again later.');
-        setIsLoading(false);
-      }
-    };
+  const fetchReviews = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`${API_URL}/cars/${carId}/reviews`);
+      setReviews(response.data);
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      setErrorMessage('Failed to load reviews. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchReviews();
   }, [carId]);
 
@@ -51,6 +53,7 @@ function Reviews() {
 
   return (
     <div className="CarReviews">
+        <ReviewForm carId={carId} refreshReviews={fetchReviews} />
       <h2>Customer Reviews</h2>
       {reviews.length > 0 ? (
         <ul>
@@ -63,8 +66,7 @@ function Reviews() {
               <p style={{ fontSize: '0.85em', color: '#555' }}>
                 Reviewed on {new Date(review.date).toLocaleDateString()}
               </p>
-               {/* Show delete button only if the user is the author or an admin */}
-               {isLoggedIn && (review.user._id === user?._id || user?.isAdmin) && (
+                {isLoggedIn && (review.user._id === user?._id || user?.isAdmin) && (
                 <button onClick={() => handleDeleteReview(review._id)} style={{ color: 'red' }}>
                   Delete Review
                 </button>
@@ -79,4 +81,4 @@ function Reviews() {
   );
 }
 
-export default Reviews;
+export default Reviews; 

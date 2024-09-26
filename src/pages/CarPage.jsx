@@ -48,7 +48,7 @@ function CarPage() {
       <p>Exterior Colors: {car.exteriorColor.join(', ')}</p>
       <p>Price: ${car.price}</p>
       <p>Features: {Array.isArray(car.features) ? car.features.join(', ') : 'No features available'}</p>
-        <ReviewForm />
+        {/* <ReviewForm /> */}
         <Reviews />
     </div>
   );
