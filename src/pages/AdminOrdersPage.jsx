@@ -73,29 +73,41 @@ function AdminOrdersPage() {
       <h1>All Orders</h1>
       {errorMessage && <p className="error-message" style={{ color: 'red' }}>{errorMessage}</p>}
       {orders.length > 0 ? (
-      <ul>
-        {orders.map((order) => {
-          const car = order.configuration.car;
+        <ul>
+          {orders.map((order) => {
+            const car = order?.configuration?.car || {};
+            const carMake = order.configuration.make || 'Unknown Make';
+            const carModel = Array.isArray(order.configuration.model) ? order.configuration.model.join(', ') : order.configuration.model || 'Unknown Model';
+            const carTrim = order.configuration.trim || '';
 
-          return (
-            <li key={order._id}>
-              <h3>
-              {car.make} {car.model} {car.trim}
-              </h3>
-              <p>Engine: {order.configuration.engine}</p>
-              <p>Transmission: {order.configuration.transmission}</p>
-              <p>Exterior Color: {order.configuration.exteriorColor }</p>
-              <p>Interior Color: {order.configuration.interiorColor}</p>
-              <p>Features: {Array.isArray(order.configuration.features)? order.configuration.features.join(', ') : 'No features available'}</p>
-              <p>Total Price: {order.totalPrice}</p>
-              <p>Status: {order.status}</p>
-              <button onClick={() => handleAcceptOrder(order._id)}>Accept</button>
-              <button onClick={() => handleRejectOrder(order._id)}>Reject</button>
-            </li>
-          );
-        })}
-      </ul>
-      ):(<h3>No Orders yet!</h3>)}
+            return (
+              <li key={order._id}>
+              {order.car.images && order.car.images.length > 0 && (
+                <img 
+                    src={order.car.images[0]} 
+                    alt={`${order.car.make} ${order.car.model}`} 
+                    style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', marginBottom: '20px' }} 
+                />
+                )}
+                <h3>
+                  {carMake} {carModel} {carTrim}
+                </h3>
+                <p>Engine: {order.configuration?.engine || 'N/A'}</p>
+                <p>Transmission: {order.configuration?.transmission || 'N/A'}</p>
+                <p>Exterior Color: {order.configuration?.exteriorColor || 'N/A'}</p>
+                <p>Interior Color: {order.configuration?.interiorColor || 'N/A'}</p>
+                <p>Features: {Array.isArray(order.configuration?.features) ? order.configuration.features.join(', ') : 'No features available'}</p>
+                <p>Total Price: €{order.totalPrice.toFixed(2)}</p>
+                <p>Status: {order.status}</p>
+                <button onClick={() => handleAcceptOrder(order._id)}>Accept</button>
+                <button onClick={() => handleRejectOrder(order._id)}>Reject</button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <h3>No Orders yet!</h3>
+      )}
     </div>
   );
 }

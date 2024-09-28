@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Form, Select, Checkbox, Button, Typography, Alert, Row, Col } from 'antd';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005'; 
+const { Title } = Typography;
+const { Option } = Select;
 
 function CarConfigurationPage() {
   const { carId } = useParams();
@@ -44,6 +47,28 @@ function CarConfigurationPage() {
             "Electric Powertrain": 5000,
             "Autonomous Driving": 3000,
             "Fast Charging": 800,
+            "Autopilot": 3000,
+            "Harman Kardon Sound System": 2000,
+            "M Adaptive Suspension": 1500,
+            "Carbon Fiber Roof": 5000,
+            "Heated Steering Wheel": 300,
+            "Apple CarPlay": 500,
+            "Wireless Charging": 200,
+            "360-Degree Camera": 500,
+            "Ventilated Seats": 1000,
+            "Heads-Up Display": 700,
+            "Adaptive Air Suspension": 2000,
+            "Wireless Phone Charging": 300,
+            "Burmester Sound System": 2000,
+            "Virtual Cockpit": 500,
+            "Bang & Olufsen Sound System": 1500,
+            "Matrix LED Headlights": 600,
+            "Quattro All-Wheel Drive": 4000,
+            "Lane Assist": 300,
+            "Sport Suspension": 400,
+            "Active Aerodynamics": 1000,
+            "Rear-Wheel Steering": 1500,
+            "Magnetorheological Suspension": 4000, 
           };
 
           setFeaturePrices(prices);
@@ -51,8 +76,8 @@ function CarConfigurationPage() {
           setFormData({  //adds data to the form
             engine: carData.engine?.[0] || '', // This checks if some value exists if not then it keeps empty
             transmission: carData.transmission?.[0] || '',
-            exteriorColor: carData.exteriorColor?.[0] || '',
-            interiorColor: carData.interiorColor?.[0] || '',
+            exteriorColor: carData.exteriorColor?.[0].name || '',
+            interiorColor: carData.interiorColor?.[0].name || '',
             features: [],
             price: carData.price || 0,
           });
@@ -162,18 +187,18 @@ function CarConfigurationPage() {
 
         <label>Exterior Color:</label>
         <select name="exteriorColor" value={formData.exteriorColor} onChange={handleInputChange} required>
-          {(car.exteriorColor || []).map((option, index) => (
-            <option key={index} value={option}>
-              {option}
+          {(car.exteriorColor || []).map((color, index) => (
+            <option key={index} value={color.name}>
+              {color.name}
             </option>
           ))}
         </select>
 
         <label>Interior Color:</label>
         <select name="interiorColor" value={formData.interiorColor} onChange={handleInputChange} required>
-          {(car.interiorColor || []).map((option, index) => (
-            <option key={index} value={option}>
-              {option}
+          {(car.interiorColor || []).map((color, index) => (
+            <option key={index} value={color.name}>
+              {color.name}
             </option>
           ))}
         </select>

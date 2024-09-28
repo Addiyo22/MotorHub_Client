@@ -1,12 +1,17 @@
+import { useState } from 'react';
+import { Alert } from 'antd';
+
 function VideoPlayer() {
-    const handleVideoError = () => {
-        alert("Error loading video. Please check the file path or try a different browser.");
-      };
+  const [videoError, setVideoError] = useState(false);
+
+  const handleVideoError = () => {
+    setVideoError(true);
+  };
+
   return (
-    <div>
-      <h2>Video Player</h2>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
       <video
-        width="1200"
+        style={{ maxWidth: '100%', borderRadius: '10px' }}
         controls
         autoPlay
         onError={handleVideoError}
@@ -15,8 +20,17 @@ function VideoPlayer() {
         <source src="/Videos/porsche1.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
+      {videoError && (
+        <Alert
+          message="Error loading video"
+          description="Please check the file path or try a different browser."
+          type="error"
+          showIcon
+          style={{ marginTop: '10px', width: '80%' }}
+        />
+      )}
     </div>
   );
-};
+}
 
-export default VideoPlayer
+export default VideoPlayer;

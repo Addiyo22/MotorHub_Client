@@ -1,20 +1,20 @@
 import { useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/auth.context';
+import { Form, Input, Rate, Button, Alert } from 'antd';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005'; 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
 
 function ReviewForm({ carId, refreshReviews }) {
-  const { user, isLoggedIn } = useContext(AuthContext);
-  const [rating, setRating] = useState('');
+  const { isLoggedIn } = useContext(AuthContext);
+  const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setIsSubmitting(true);
     setErrorMessage('');
     setSuccessMessage('');
@@ -39,7 +39,7 @@ function ReviewForm({ carId, refreshReviews }) {
       );
 
       setSuccessMessage('Review submitted successfully!');
-      setRating('');
+      setRating(0);
       setComment('');
 
       refreshReviews();
@@ -56,38 +56,43 @@ function ReviewForm({ carId, refreshReviews }) {
   };
 
   if (!isLoggedIn) {
-    return <p>Please log in to leave a review.</p>;
+    return <Alert message="Please log in to leave a review." type="warning" showIcon />;
   }
 
   return (
-    <div className="ReviewForm">
+    <div
+      className="ReviewForm"
+      style={{
+        background: '#fff',
+        padding: '20px',
+        border: '1px solid #f0f0f0',
+        borderRadius: '8px',
+        marginBottom: '20px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Adds subtle shadow for depth
+      }}
+    >
       <h2>Leave a Review</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Rating:</label>
-        <select value={rating} onChange={(e) => setRating(e.target.value)} required>
-          <option value="">Select Rating</option>
-          <option value="1">1 - Poor</option>
-          <option value="2">2 - Fair</option>
-          <option value="3">3 - Good</option>
-          <option value="4">4 - Very Good</option>
-          <option value="5">5 - Excellent</option>
-        </select>
+      {errorMessage && <Alert message={errorMessage} type="error" showIcon style={{ marginBottom: '10px' }} />}
+      {successMessage && <Alert message={successMessage} type="success" showIcon style={{ marginBottom: '10px' }} />}
+      <Form layout="vertical" onFinish={handleSubmit}>
+        <Form.Item label="Rating:" required>
+          <Rate value={rating} onChange={setRating} />
+        </Form.Item>
 
-        <label>Comment:</label>
-        <textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Write your review..."
-          maxLength="500"
-        />
+        <Form.Item label="Comment:">
+          <Input.TextArea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Write your review..."
+            maxLength={500}
+            rows={4}
+          />
+        </Form.Item>
 
-        <button type="submit" disabled={isSubmitting}>
+        <Button type="primary" htmlType="submit" loading={isSubmitting}>
           {isSubmitting ? 'Submitting...' : 'Submit Review'}
-        </button>
-      </form>
-
-      {errorMessage && <p className="error-message" style={{ color: 'red' }}>{errorMessage}</p>}
-      {successMessage && <p className="success-message" style={{ color: 'green' }}>{successMessage}</p>}
+        </Button>
+      </Form>
     </div>
   );
 }

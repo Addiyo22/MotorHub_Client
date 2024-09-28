@@ -17,7 +17,7 @@ import OrdersPage from "./pages/OrdersPage";
 import InventoryPage from "./pages/InventoryPage";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
 import AdminSignUp from "./pages/AdminSignUp";
-import CarEditingPage from "./pages/CarCreationPage";
+import CarEditingPage from "./pages/CarEdditingPage";
 import UserManagement from "./pages/UsersManagementPage";
 
 function App() {
@@ -26,7 +26,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/admin/users" element={ <IsAdmin> <UserManagement /> </IsAdmin> } />
-        <Route path="/admin/editCar/:carId" element={ <IsAdmin> <CarEditingPage /> </IsAdmin> } />
+        <Route path="/admin/cars/:carId/edit" element={ <IsAdmin> <CarEditingPage /> </IsAdmin> } />
         <Route path="/admin/signup" element={ <IsAdmin> <AdminSignUp /> </IsAdmin> } />
         <Route path="/admin/orders" element={ <IsAdmin> <AdminOrdersPage /> </IsAdmin> } />
         <Route path="/inventory" element={<InventoryPage />} />

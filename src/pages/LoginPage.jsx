@@ -1,73 +1,79 @@
+// LoginPage.jsx
 import { useState, useContext } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/auth.context";
+import { Form, Input, Button, Typography, Alert, Space } from "antd";
+import '../styles/LoginPageStyle.css'; // Import the CSS file
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5005";
+const { Title } = Typography;
 
-
-function LoginPage(props) {
+function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(undefined);
-  
   const navigate = useNavigate();
+  const { storeToken, authenticateUser } = useContext(AuthContext);
 
-  const { storeToken, authenticateUser } = useContext(AuthContext); 
-
-  const handleEmail = (e) => setEmail(e.target.value);
-  const handlePassword = (e) => setPassword(e.target.value);
-
-  
-  const handleLoginSubmit = (e) => {
-    e.preventDefault();
+  const handleLoginSubmit = async (values) => {
+    const { email, password } = values;
     const requestBody = { email, password };
- 
-    axios.post(`${API_URL}/auth/login`, requestBody)
-      .then((response) => {
 
-        console.log('JWT token', response.data.authToken );
-      
-        storeToken(response.data.authToken); 
-        authenticateUser();  
-                                        
-      })
-      .then(()=>navigate('/dashboard') )
-      .catch((error) => {
-        const errorDescription = error.response.data.message;
-        setErrorMessage(errorDescription);
-      })
+    try {
+      const response = await axios.post(`${API_URL}/auth/login`, requestBody);
+      storeToken(response.data.authToken);
+      authenticateUser();
+      navigate("/dashboard");
+    } catch (error) {
+      const errorDescription = error.response?.data?.message || "Login failed. Please try again.";
+      console.log('error message', errorDescription)
+      setErrorMessage(errorDescription);
+    }
   };
-  
+
   return (
-    <div className="LoginPage">
-      <h1>Login</h1>
+    <div className="login-container">
+      <div className="login-form-wrapper">
+        <Title level={2} className="login-title">Login</Title>
+        <Form
+          name="login"
+          onFinish={handleLoginSubmit}
+          layout="vertical"
+          autoComplete="off"
+          className="login-form"
+        >
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}
+          >
+            <Input placeholder="Enter your email" />
+          </Form.Item>
 
-      <form onSubmit={handleLoginSubmit}>
-        <label>Email:</label>
-        <input 
-          type="email"
-          name="email"
-          value={email}
-          onChange={handleEmail}
-        />
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[{ required: true, message: 'Please input your password!' }]}
+          >
+            <Input.Password placeholder="Enter your password" />
+          </Form.Item>
 
-        <label>Password:</label>
-        <input
-          type="password"
-          name="password"
-          value={password}
-          onChange={handlePassword}
-        />
+          {errorMessage && <Alert message={errorMessage} type="error" showIcon style={{ marginBottom: '20px' }} />}
 
-        <button type="submit">Login</button>
-      </form>
-      { errorMessage && <p className="error-message">{errorMessage}</p> }
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              Login
+            </Button>
+          </Form.Item>
+        </Form>
 
-      <p>Don't have an account yet?</p>
-      <Link to={"/signup"}> Sign Up</Link>
+        <Space direction="vertical" style={{ width: '100%', textAlign: 'center' }}>
+          <p>Don't have an account yet? <Link to="/signup">Sign Up</Link></p>
+        </Space>
+      </div>
     </div>
-  )
+  );
 }
 
 export default LoginPage;

@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { useContext } from 'react';
+import axios from 'axios';
 import { AuthContext } from '../context/auth.context';
 import ReviewForm from './ReviewForm';
+import { Card, Button, Typography, Spin, Alert, List, Rate } from 'antd';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005'; 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
+const { Title, Text } = Typography;
 
 function Reviews() {
-  const { carId } = useParams(); 
+  const { carId } = useParams();
   const [reviews, setReviews] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -48,37 +49,60 @@ function Reviews() {
     }
   };
 
-  if (isLoading) return <p>Loading reviews...</p>;
-  if (errorMessage) return <p style={{ color: 'red' }}>{errorMessage}</p>;
+  if (isLoading) return <Spin size="large" style={{ display: 'block', margin: '20px auto' }} />;
+  if (errorMessage) return <Alert message={errorMessage} type="error" showIcon style={{ marginBottom: '20px' }} />;
 
   return (
-    <div className="CarReviews">
-        <ReviewForm carId={carId} refreshReviews={fetchReviews} />
-      <h2>Customer Reviews</h2>
+    <div className="CarReviews" style={{ padding: '20px' }}>
+      <ReviewForm carId={carId} refreshReviews={fetchReviews} />
+      <Title level={2} style={{ marginBottom: '20px' }}>Customer Reviews</Title>
       {reviews.length > 0 ? (
-        <ul>
-          {reviews.map((review) => (
-            <li key={review._id} style={{ marginBottom: '1rem', border: '1px solid #ccc', padding: '10px' }}>
-              <h4>
-                {review.user?.username || 'Anonymous'} - Rating: {review.rating}/5
-              </h4>
-              <p>{review.comment || 'No comment provided.'}</p>
-              <p style={{ fontSize: '0.85em', color: '#555' }}>
-                Reviewed on {new Date(review.date).toLocaleDateString()}
-              </p>
-                {isLoggedIn && (review.user._id === user?._id || user?.isAdmin) && (
-                <button onClick={() => handleDeleteReview(review._id)} style={{ color: 'red' }}>
-                  Delete Review
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
+        <List
+          itemLayout="vertical"
+          dataSource={reviews}
+          renderItem={(review) => (
+            <Card
+              key={review._id}
+              style={{ marginBottom: '20px' }}
+              actions={
+                isLoggedIn && (review.user._id === user?._id || user?.isAdmin)
+                  ? [
+                      <Button
+                        type="link"
+                        onClick={() => handleDeleteReview(review._id)}
+                        danger
+                        style={{ paddingLeft: 0 }}
+                      >
+                        Delete Review
+                      </Button>,
+                    ]
+                  : []
+              }
+            >
+              <Card.Meta
+                title={
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Text strong>{review.user?.username || 'Anonymous'}</Text>
+                    <Rate disabled defaultValue={review.rating} />
+                  </div>
+                }
+                description={
+                  <>
+                    <p>{review.comment || 'No comment provided.'}</p>
+                    <Text type="secondary" style={{ fontSize: '0.85em' }}>
+                      Reviewed on {new Date(review.date).toLocaleDateString()}
+                    </Text>
+                  </>
+                }
+              />
+            </Card>
+          )}
+        />
       ) : (
-        <p>No reviews available for this car.</p>
+        <Alert message="No reviews available for this car." type="info" showIcon />
       )}
     </div>
   );
 }
 
-export default Reviews; 
+export default Reviews;
