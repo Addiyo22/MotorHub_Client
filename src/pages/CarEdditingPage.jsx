@@ -1,31 +1,19 @@
 import { useState, useEffect } from 'react';
+import { Form, Input, InputNumber, Checkbox, Button, Upload, message, Typography } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import '../styles/CarEdittingPage.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
+const { Title } = Typography;
 
 function CarEditingPage() {
   const { carId } = useParams();
-  const [formData, setFormData] = useState({
-    make: '',
-    model: '',
-    year: '',
-    trim: '',
-    engine: '',
-    engineHorsepower: '',
-    transmission: '',
-    interiorColor: { name: '', hex: '' }, // Updated to be an object
-    exteriorColor: { name: '', hex: '' }, // Updated to be an object
-    features: '',
-    price: '',
-    quantity: '',
-    location: '',
-    available: true,
-  });
-
+  const [form] = Form.useForm(); 
+  const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,21 +26,23 @@ function CarEditingPage() {
           },
         });
 
-        // Set formData with the fetched car details, handling colors properly
-        setFormData({
+        // Set form fields for colors and other car details
+        form.setFieldsValue({
           make: car.make || '',
-          model: car.model.join(', ') || '',
+          model: car.model ? car.model.join(', ') : '',
           year: car.year || '',
-          trim: car.trim.join(', ') || '',
-          engine: car.engine.join(', ') || '',
-          engineHorsepower: car.engineHorsepower.join(', ') || '',
-          transmission: car.transmission.join(', ') || '',
-          interiorColor: car.interiorColor[0] || { name: '', hex: '' }, // Handles the first color object or default
-          exteriorColor: car.exteriorColor[0] || { name: '', hex: '' }, // Handles the first color object or default
+          trim: car.trim ? car.trim.join(', ') : '',
+          engine: car.engine ? car.engine.join(', ') : '',
+          engineHorsepower: car.engineHorsepower ? car.engineHorsepower.join(', ') : '',
+          transmission: car.transmission ? car.transmission.join(', ') : '',
+          interiorColorName: car.interiorColor[0]?.name || '', // Set the name of the first interior color
+          interiorColorHex: car.interiorColor[0]?.hex || '',   // Set the hex of the first interior color
+          exteriorColorName: car.exteriorColor[0]?.name || '', // Set the name of the first exterior color
+          exteriorColorHex: car.exteriorColor[0]?.hex || '',   // Set the hex of the first exterior color
           features: car.features ? car.features.join(', ') : '',
           price: car.price || '',
-          quantity: car.quantity || '',
-          location: car.location || '',
+          quantity: car.quantity || null,
+          location: car.location || null,
           available: car.available || true,
         });
       } catch (error) {
@@ -62,40 +52,20 @@ function CarEditingPage() {
     };
 
     fetchCarDetails();
-  }, [carId]);
+  }, [carId, form]);
 
   // Handle input changes
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    // Handle color inputs separately if needed
-    if (name.includes('Color')) {
-      const colorType = name.startsWith('interior') ? 'interiorColor' : 'exteriorColor';
-      const colorKey = name.endsWith('Name') ? 'name' : 'hex';
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [colorType]: {
-          ...prevFormData[colorType],
-          [colorKey]: value,
-        },
-      }));
-    } else {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [name]: type === 'checkbox' ? checked : value,
-      }));
-    }
+  const handleInputChange = (changedValues, allValues) => {
+    // This function updates the form data when fields change.
   };
 
   // Handle image file input change
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+  const handleImageChange = ({ file }) => {
+    setImage(file); // Set the selected image file in state
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values) => {
     setIsLoading(true);
     setErrorMessage('');
 
@@ -103,15 +73,15 @@ function CarEditingPage() {
 
     // Prepare the data to match the backend requirements
     const carDetails = {
-      ...formData,
-      model: formData.model.split(',').map((m) => m.trim()),
-      trim: formData.trim.split(',').map((t) => t.trim()),
-      engine: formData.engine.split(',').map((e) => e.trim()),
-      transmission: formData.transmission.split(',').map((t) => t.trim()),
-      engineHorsepower: formData.engineHorsepower.split(',').map((hp) => parseFloat(hp)),
-      features: formData.features.split(',').map((f) => f.trim()),
-      interiorColor: [{ name: formData.interiorColor.name, hex: formData.interiorColor.hex }],
-      exteriorColor: [{ name: formData.exteriorColor.name, hex: formData.exteriorColor.hex }],
+      ...values,
+      model: values.model.split(',').map((m) => m.trim()),
+      trim: values.trim.split(',').map((t) => t.trim()),
+      engine: values.engine.split(',').map((e) => e.trim()),
+      transmission: values.transmission.split(',').map((t) => t.trim()),
+      engineHorsepower: values.engineHorsepower.split(',').map((hp) => parseFloat(hp)),
+      features: values.features.split(',').map((f) => f.trim()),
+      interiorColor: [{ name: values.interiorColorName, hex: values.interiorColorHex }], // Combine name and hex
+      exteriorColor: [{ name: values.exteriorColorName, hex: values.exteriorColorHex }], // Combine name and hex
     };
 
     const formDataToSubmit = new FormData();
@@ -119,106 +89,123 @@ function CarEditingPage() {
     if (image) formDataToSubmit.append('image', image);
 
     try {
-      const response = await axios.put(
-        `${API_URL}/admin/cars/${carId}/edit`,
-        formDataToSubmit,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.put(`${API_URL}/admin/cars/${carId}/edit`, formDataToSubmit, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      console.log('Car updated:', response.data);
+      message.success('Car updated successfully!');
       navigate(`/cars/${carId}`);
     } catch (error) {
       console.error('Error updating car:', error);
-      if (error.response && error.response.data) {
-        setErrorMessage(error.response.data.message);
-      } else {
-        setErrorMessage('Failed to update car. Please try again.');
-      }
+      setErrorMessage(error.response?.data?.message || 'Failed to update car. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div>
-      <h1>Edit Car Details</h1>
-      <form onSubmit={handleSubmit}>
-        <label>Make:</label>
-        <input type="text" name="make" value={formData.make} onChange={handleInputChange} required />
+    <div style={{ padding: '50px', backgroundColor: 'white', width: '100vw'}}>
+      <Title level={2} style={{textAlign: 'center'}}>Edit Car</Title>
+      <Form
+        form={form}
+        layout="vertical"
+        onValuesChange={handleInputChange}
+        onFinish={handleSubmit}
+        style={{width: '100vw', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}
+      >
+        <Form.Item label="Make" name="make" style={{ width: '30rem' }} rules={[{ required: true, message: 'Please input the make!' }]}>
+          <Input placeholder="Enter car make" />
+        </Form.Item>
 
-        <label>Model:</label>
-        <input type="text" name="model" value={formData.model} onChange={handleInputChange} required />
+        <Form.Item label="Model" name="model" style={{ width: '30rem' }} rules={[{ required: true, message: 'Please input the model!' }]}>
+          <Input placeholder="Enter car model" />
+        </Form.Item>
 
-        <label>Year:</label>
-        <input type="number" name="year" value={formData.year} onChange={handleInputChange} required />
+        <Form.Item label="Year" name="year" style={{ width: '30rem' }} rules={[{ required: true, message: 'Please input the year!' }]}>
+          <InputNumber min={1900} max={2024} placeholder="Enter year" style={{ width: '100%' }} />
+        </Form.Item>
 
-        <label>Trim:</label>
-        <input type="text" name="trim" value={formData.trim} onChange={handleInputChange} />
+        <Form.Item label="Trim" name="trim" style={{ width: '30rem' }}>
+          <Input placeholder="Enter car trim" />
+        </Form.Item>
 
-        <label>Engine:</label>
-        <input type="text" name="engine" value={formData.engine} onChange={handleInputChange} />
+        <Form.Item label="Engine" name="engine" style={{ width: '30rem' }}>
+          <Input placeholder="Enter engine type" />
+        </Form.Item>
 
-        <label>Engine Horsepower:</label>
-        <input
-          type="number"
-          name="engineHorsepower"
-          value={formData.engineHorsepower}
-          onChange={handleInputChange}
-        />
+        <Form.Item label="Engine Horsepower" name="engineHorsepower" style={{ width: '30rem' }}>
+          <Input placeholder="Enter horsepower" />
+        </Form.Item>
 
-        <label>Transmission:</label>
-        <input type="text" name="transmission" value={formData.transmission} onChange={handleInputChange} />
+        <Form.Item label="Transmission" name="transmission" style={{ width: '30rem' }}>
+          <Input placeholder="Enter transmission type" />
+        </Form.Item>
 
-        <label>Interior Color Name:</label>
-        <input type="text" name="interiorColorName" value={formData.interiorColor.name} onChange={handleInputChange} />
+        <Form.Item label="Interior Color Name" name="interiorColorName" style={{ width: '30rem' }} rules={[{ required: true }]}>
+          <Input placeholder="Enter interior color name" />
+        </Form.Item>
 
-        <label>Interior Color Hex:</label>
-        <input type="text" name="interiorColorHex" value={formData.interiorColor.hex} onChange={handleInputChange} />
+        <Form.Item label="Interior Color Hex" name="interiorColorHex" style={{ width: '30rem' }} rules={[{ required: true }]}>
+          <Input placeholder="Enter interior color hex" />
+        </Form.Item>
 
-        <label>Exterior Color Name:</label>
-        <input type="text" name="exteriorColorName" value={formData.exteriorColor.name} onChange={handleInputChange} />
+        <Form.Item label="Exterior Color Name" name="exteriorColorName" style={{ width: '30rem' }} rules={[{ required: true }]}>
+          <Input placeholder="Enter exterior color name" />
+        </Form.Item>
 
-        <label>Exterior Color Hex:</label>
-        <input type="text" name="exteriorColorHex" value={formData.exteriorColor.hex} onChange={handleInputChange} />
+        <Form.Item label="Exterior Color Hex" name="exteriorColorHex" style={{ width: '30rem' }} rules={[{ required: true }]}>
+          <Input placeholder="Enter exterior color hex" />
+        </Form.Item>
 
-        <label>Features:</label>
-            <textarea
-            name="features"
-            value={formData.features}
-            onChange={handleInputChange}
-            placeholder="Enter features separated by commas"
-            />
+        <Form.Item label="Features" name="features" style={{ width: '30rem' }}>
+          <Input.TextArea placeholder="Enter features separated by commas" />
+        </Form.Item>
 
-        <label>Price:</label>
-        <input type="number" name="price" value={formData.price} onChange={handleInputChange} required />
+        <Form.Item label="Price" name="price" style={{ width: '30rem' }} rules={[{ required: true }]}>
+          <InputNumber min={0} prefix="€" style={{ width: '100%' }} />
+        </Form.Item>
 
-        <label>
-          Available:
-          <input type="checkbox" name="available" checked={formData.available} onChange={handleInputChange} />
-        </label>
+        {form.getFieldValue('quantity') !== null && (
+          <Form.Item label="Quantity" name="quantity" style={{ width: '30rem' }} rules={[]}>
+            <InputNumber min={0} style={{ width: '100%' }} />
+          </Form.Item>
+        )}
 
-        <label>Quantity:</label>
-        <input type="number" name="quantity" value={formData.quantity} onChange={handleInputChange} required />
+        {form.getFieldValue('location') !== null && (
+          <Form.Item label="Location" name="location" style={{ width: '30rem' }} rules={[]}>
+            <Input placeholder="Enter car location" />
+          </Form.Item>
+        )}
 
-        <label>Location:</label>
-        <input type="text" name="location" value={formData.location} onChange={handleInputChange} />
+        <Form.Item name="available" valuePropName="checked" >
+          <Checkbox>Available</Checkbox>
+        </Form.Item>
 
-        <label>Car Image:</label>
-        <input type="file" onChange={handleImageChange} />
+        <Form.Item label="Upload Car Image">
+          <Upload beforeUpload={() => false} onChange={handleImageChange} listType="picture">
+            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+          </Upload>
+        </Form.Item>
 
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Updating...' : 'Update Car'}
-        </button>
-      </form>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={isLoading} block>
+            {isLoading ? 'Updating...' : 'Update Car'}
+          </Button>
+        </Form.Item>
+      </Form>
 
-      {errorMessage && <p className="error-message" style={{ color: 'red' }}>{errorMessage}</p>}
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
     </div>
   );
 }
 
 export default CarEditingPage;
+
+
+ 
+
+{/* <input type="checkbox" name="available" checked={formData.available} onChange={handleInputChange} />
+ */}

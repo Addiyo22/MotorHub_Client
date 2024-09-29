@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Link, } from 'react-router-dom';
+import { Button, Table, message, Card, Typography } from 'antd';
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005'; 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
+const { Title } = Typography;
 
 function AdminOrdersPage() {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const fetchOrders = async () => {
+      setLoading(true);
       try {
         const authToken = localStorage.getItem('authToken');
         const response = await axios.get(`${API_URL}/admin/orders`, {
@@ -18,11 +21,11 @@ function AdminOrdersPage() {
           },
         });
 
-        console.log('Fetched orders:', response.data); 
         setOrders(response.data);
+        setLoading(false);
       } catch (error) {
-        console.error('Error fetching orders:', error);
-        setErrorMessage('Failed to load orders. Please try again later.');
+        setLoading(false);
+        message.error('Failed to load orders. Please try again later.');
       }
     };
 
@@ -42,9 +45,9 @@ function AdminOrdersPage() {
           order._id === orderId ? { ...order, status: 'accepted' } : order
         )
       );
+      message.success('Order accepted successfully!');
     } catch (error) {
-      console.error('Error accepting order:', error);
-      setErrorMessage('Failed to accept the order.');
+      message.error('Failed to accept the order.');
     }
   };
 
@@ -61,53 +64,94 @@ function AdminOrdersPage() {
           order._id === orderId ? { ...order, status: 'rejected' } : order
         )
       );
+      message.success('Order rejected successfully!');
     } catch (error) {
-      console.error('Error rejecting order:', error);
-      setErrorMessage('Failed to reject the order.');
+      message.error('Failed to reject the order.');
     }
   };
 
+  const columns = [
+    {
+      title: 'Car',
+      dataIndex: 'car',
+      key: 'car',
+      render: (car, order) => {
+        const carMake = order.configuration.make || 'Unknown Make';
+        const carModel = Array.isArray(order.configuration.model)
+          ? order.configuration.model.join(', ')
+          : order.configuration.model || 'Unknown Model';
+        const carTrim = order.configuration.trim || '';
+
+        return (
+          <Card hoverable cover={<img alt={carMake} src={order.car.images?.[0]} style={{ height: '150px', objectFit: 'cover' }} />}>
+            <h3>{carMake} {carModel} {carTrim}</h3>
+          </Card>
+        );
+      },
+    },
+    {
+      title: 'Details',
+      dataIndex: 'configuration',
+      key: 'details',
+      render: (configuration) => (
+        <>
+          <p>Engine: {configuration.engine || 'N/A'}</p>
+          <p>Transmission: {configuration.transmission || 'N/A'}</p>
+          <p>Exterior Color: {configuration.exteriorColor || 'N/A'}</p>
+          <p>Interior Color: {configuration.interiorColor || 'N/A'}</p>
+          <p>Features: {Array.isArray(configuration.features) ? configuration.features.join(', ') : 'No features available'}</p>
+        </>
+      ),
+    },
+    {
+      title: 'Total Price',
+      dataIndex: 'totalPrice',
+      key: 'totalPrice',
+      render: (price) => `€${price.toFixed(2)}`,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => <p>{status}</p>,
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (text, order) => (
+        <>
+          <Button
+            type="primary"
+            onClick={() => handleAcceptOrder(order._id)}
+            disabled={order.status === 'accepted'}
+          >
+            Accept
+          </Button>
+          <Button
+            type="danger"
+            onClick={() => handleRejectOrder(order._id)}
+            disabled={order.status === 'rejected'}
+            style={{ marginLeft: 10 }}
+          >
+            Reject
+          </Button>
+        </>
+      ),
+    },
+  ];
 
   return (
-    <div className="OrdersPage">
-      <h1>All Orders</h1>
+    <div className="OrdersPage" style={{ padding: '20px' }}>
+      <Title level={2}>All Orders</Title>
       {errorMessage && <p className="error-message" style={{ color: 'red' }}>{errorMessage}</p>}
-      {orders.length > 0 ? (
-        <ul>
-          {orders.map((order) => {
-            const car = order?.configuration?.car || {};
-            const carMake = order.configuration.make || 'Unknown Make';
-            const carModel = Array.isArray(order.configuration.model) ? order.configuration.model.join(', ') : order.configuration.model || 'Unknown Model';
-            const carTrim = order.configuration.trim || '';
 
-            return (
-              <li key={order._id}>
-              {order.car.images && order.car.images.length > 0 && (
-                <img 
-                    src={order.car.images[0]} 
-                    alt={`${order.car.make} ${order.car.model}`} 
-                    style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', marginBottom: '20px' }} 
-                />
-                )}
-                <h3>
-                  {carMake} {carModel} {carTrim}
-                </h3>
-                <p>Engine: {order.configuration?.engine || 'N/A'}</p>
-                <p>Transmission: {order.configuration?.transmission || 'N/A'}</p>
-                <p>Exterior Color: {order.configuration?.exteriorColor || 'N/A'}</p>
-                <p>Interior Color: {order.configuration?.interiorColor || 'N/A'}</p>
-                <p>Features: {Array.isArray(order.configuration?.features) ? order.configuration.features.join(', ') : 'No features available'}</p>
-                <p>Total Price: €{order.totalPrice.toFixed(2)}</p>
-                <p>Status: {order.status}</p>
-                <button onClick={() => handleAcceptOrder(order._id)}>Accept</button>
-                <button onClick={() => handleRejectOrder(order._id)}>Reject</button>
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <h3>No Orders yet!</h3>
-      )}
+      <Table
+        dataSource={orders}
+        columns={columns}
+        rowKey="_id"
+        loading={loading}
+        pagination={{ pageSize: 10 }}
+      />
     </div>
   );
 }

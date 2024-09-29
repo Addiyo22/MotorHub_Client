@@ -1,9 +1,11 @@
-// CarCreationPage.jsx
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Form, Input, Button, Checkbox, Upload, Typography, message } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
+const { Title } = Typography;
 
 function CarCreationPage() {
   const [formData, setFormData] = useState({
@@ -24,13 +26,10 @@ function CarCreationPage() {
     location: '',
     available: true,
   });
-
   const [image, setImage] = useState(null); // State for handling image file
-  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -39,20 +38,15 @@ function CarCreationPage() {
     });
   };
 
-  // Handle image file input change
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+  const handleImageChange = ({ file }) => {
+    setImage(file); // Set the selected image file in state
   };
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setIsLoading(true);
-    setErrorMessage('');
-
     const token = localStorage.getItem('authToken');
 
-    // Prepare the data to match the backend requirements
+    // Prepare the data
     const carDetails = {
       ...formData,
       model: formData.model.split(',').map((m) => m.trim()),
@@ -67,96 +61,114 @@ function CarCreationPage() {
 
     const formDataToSubmit = new FormData();
     formDataToSubmit.append('carDetails', JSON.stringify(carDetails));
-    if (image) formDataToSubmit.append('image', image); // Append image file if selected
+    if (image) formDataToSubmit.append('image', image);
 
     try {
-      const response = await axios.post(`${API_URL}/admin/newCar`, formDataToSubmit, {
+      await axios.post(`${API_URL}/admin/newCar`, formDataToSubmit, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
       });
-
-      console.log('Car created:', response.data);
+      message.success('Car created successfully!');
       navigate('/cars');
     } catch (error) {
-      console.error('Error creating car:', error);
-      if (error.response && error.response.data) {
-        setErrorMessage(error.response.data.message);
-      } else {
-        setErrorMessage('Failed to create car. Please try again.');
-      }
+      message.error('Failed to create car. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="CarCreationPage">
-      <h1>Create a New Car</h1>
-      <form onSubmit={handleSubmit}>
-        <label>Make:</label>
-        <input type="text" name="make" value={formData.make} onChange={handleInputChange} required />
+    <div style={{ padding: '50px', backgroundColor: 'white', width: '100vw'}}>
+      <Title level={2} style={{textAlign: 'center'}}>Create a New Car</Title>
+      <Form layout="vertical" onFinish={handleSubmit} style={{width: '100vw', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+        <Form.Item label="Make" style={{ width: '30rem' }} required>
+          <Input name="make" value={formData.make} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Model (comma-separated):</label>
-        <input type="text" name="model" value={formData.model} onChange={handleInputChange} required />
+        <Form.Item label="Model (comma-separated)" style={{ width: '30rem' }} required>
+          <Input name="model" value={formData.model} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Year:</label>
-        <input type="number" name="year" value={formData.year} onChange={handleInputChange} required />
+        <Form.Item label="Year" style={{ width: '30rem' }} required>
+          <Input type="number" name="year" value={formData.year} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Trim (comma-separated):</label>
-        <input type="text" name="trim" value={formData.trim} onChange={handleInputChange} />
+        <Form.Item label="Trim (comma-separated)" style={{ width: '30rem' }}>
+          <Input name="trim" value={formData.trim} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Engine (comma-separated):</label>
-        <input type="text" name="engine" value={formData.engine} onChange={handleInputChange} />
+        <Form.Item label="Engine (comma-separated)" style={{ width: '30rem' }}>
+          <Input name="engine" value={formData.engine} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Engine Horsepower (comma-separated):</label>
-        <input type="text" name="engineHorsepower" value={formData.engineHorsepower} onChange={handleInputChange} />
+        <Form.Item label="Engine Horsepower (comma-separated)" style={{ width: '30rem' }}>
+          <Input name="engineHorsepower" value={formData.engineHorsepower} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Transmission (comma-separated):</label>
-        <input type="text" name="transmission" value={formData.transmission} onChange={handleInputChange} />
+        <Form.Item label="Transmission (comma-separated)" style={{ width: '30rem' }}>
+          <Input name="transmission" value={formData.transmission} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Interior Color Name:</label>
-        <input type="text" name="interiorColorName" value={formData.interiorColorName} onChange={handleInputChange} />
+        <Form.Item label="Interior Color Name" style={{ width: '30rem' }}>
+          <Input name="interiorColorName" value={formData.interiorColorName} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Interior Color Hex:</label>
-        <input type="text" name="interiorColorHex" value={formData.interiorColorHex} onChange={handleInputChange} />
+        <Form.Item label="Interior Color Hex" style={{ width: '30rem' }}>
+          <Input name="interiorColorHex" value={formData.interiorColorHex} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Exterior Color Name:</label>
-        <input type="text" name="exteriorColorName" value={formData.exteriorColorName} onChange={handleInputChange} />
+        <Form.Item label="Exterior Color Name" style={{ width: '30rem' }}>
+          <Input name="exteriorColorName" value={formData.exteriorColorName} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Exterior Color Hex:</label>
-        <input type="text" name="exteriorColorHex" value={formData.exteriorColorHex} onChange={handleInputChange} />
+        <Form.Item label="Exterior Color Hex" style={{ width: '30rem' }}>
+          <Input name="exteriorColorHex" value={formData.exteriorColorHex} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Features (comma-separated):</label>
-        <textarea
-          name="features"
-          value={formData.features}
-          onChange={handleInputChange}
-          placeholder="Enter features separated by commas"
-        />
+        <Form.Item label="Features (comma-separated)" style={{ width: '30rem' }}>
+          <Input.TextArea
+            name="features"
+            value={formData.features}
+            onChange={handleInputChange}
+            placeholder="Enter features separated by commas"
+          />
+        </Form.Item>
 
-        <label>Price:</label>
-        <input type="number" name="price" value={formData.price} onChange={handleInputChange} required />
+        <Form.Item label="Price" required style={{ width: '30rem' }}>
+          <Input type="number" name="price" value={formData.price} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Available:</label>
-        <input type="checkbox" name="available" checked={formData.available} onChange={handleInputChange} />
+        <Form.Item label="Available" valuePropName="checked" style={{ width: '30rem' }}>
+          <Checkbox name="available" checked={formData.available} onChange={handleInputChange}>
+            Available
+          </Checkbox>
+        </Form.Item>
 
-        <label>Quantity:</label>
-        <input type="number" name="quantity" value={formData.quantity} onChange={handleInputChange} required />
+        <Form.Item label="Quantity" required style={{ width: '30rem' }}>
+          <Input type="number" name="quantity" value={formData.quantity} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Location:</label>
-        <input type="text" name="location" value={formData.location} onChange={handleInputChange} />
+        <Form.Item label="Location" style={{ width: '30rem' }}>
+          <Input name="location" value={formData.location} onChange={handleInputChange} />
+        </Form.Item>
 
-        <label>Car Image:</label>
-        <input type="file" onChange={handleImageChange} />
+        <Form.Item label="Car Image">
+          <Upload
+            listType="picture"
+            beforeUpload={() => false}
+            onChange={handleImageChange}
+            maxCount={1}
+          >
+            <Button icon={<UploadOutlined />}>Upload Car Image</Button>
+          </Upload>
+        </Form.Item>
 
-        <button type="submit" disabled={isLoading}>
+        <Button type="primary" style={{ width: '10rem' }} htmlType="submit" loading={isLoading} block>
           {isLoading ? 'Creating...' : 'Create Car'}
-        </button>
-      </form>
-
-      {errorMessage && <p className="error-message" style={{ color: 'red' }}>{errorMessage}</p>}
+        </Button>
+      </Form>
     </div>
   );
 }

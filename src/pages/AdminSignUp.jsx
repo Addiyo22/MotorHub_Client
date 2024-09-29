@@ -1,86 +1,95 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Form, Input, Button, Typography, message } from "antd";
+import '../styles/AdminSignupStyle.css'
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5005";
+const { Title } = Typography;
 
-
-function AdminSignUp(props) {
-  const [email, setEmail] = useState("");
-  const [username, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [errorMessage, setErrorMessage] = useState(undefined);
-
+function AdminSignUp() {
+  const [form] = Form.useForm(); // Ant Design form instance
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  
-  const handleUserName = (e) => setUserName(e.target.value)
-  const handleEmail = (e) => setEmail(e.target.value);
-  const handlePassword = (e) => setPassword(e.target.value);
-  const handleName = (e) => setName(e.target.value);
 
-  
-  const handleSignupSubmit = (e) => {
-    e.preventDefault();
-    const requestBody = { email, password, username, name, isAdmin: true }
+  // Handle form submission
+  const handleSignupSubmit = (values) => {
+    setIsLoading(true);
 
-    axios.post(`${API_URL}/auth/admin/signup`, requestBody)
-      .then((response) => {
-        navigate('/login');
+    const { email, username, password, name } = values;
+    const requestBody = { email, password, username, name, isAdmin: true };
+
+    axios
+      .post(`${API_URL}/auth/admin/signup`, requestBody)
+      .then(() => {
+        message.success("Account created successfully! Redirecting to login...");
+        navigate("/login");
       })
       .catch((error) => {
-        const errorDescription = error.response.data.message;
-        setErrorMessage(errorDescription);
+        const errorDescription = error.response?.data?.message || "Something went wrong. Please try again.";
+        message.error(errorDescription);
       })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
-  
   return (
-    <div className="SignupPage">
-      <h1>Sign Up</h1>
+    <div className="admin-signup-container">
+    <div className="admin-signup-page">
+      <Title level={2} style={{ textAlign: 'center' }}>Admin Sign Up</Title>
 
-      <form onSubmit={handleSignupSubmit}>
-        <label>Email:</label>
-        <input 
-          type="email"
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleSignupSubmit}
+        style={{ marginTop: '20px' }}
+      >
+        <Form.Item
+          label="Email"
           name="email"
-          value={email}
-          onChange={handleEmail}
-        />
+          rules={[{ required: true, message: "Please input your email!", type: "email" }]}
+        >
+          <Input placeholder="Enter your email" />
+        </Form.Item>
 
-        <label>Username:</label>
-        <input 
-          type="text"
+        <Form.Item
+          label="Username"
           name="username"
-          value={username}
-          onChange={handleUserName}
-        />
+          rules={[{ required: true, message: "Please input your username!" }]}
+        >
+          <Input placeholder="Enter your username" />
+        </Form.Item>
 
-        <label>Password:</label>
-        <input 
-          type="password"
+        <Form.Item
+          label="Password"
           name="password"
-          value={password}
-          onChange={handlePassword}
-        />
+          rules={[{ required: true, message: "Please input your password!" }]}
+        >
+          <Input.Password placeholder="Enter your password" />
+        </Form.Item>
 
-        <label>Name:</label>
-        <input 
-          type="text"
+        <Form.Item
+          label="Name"
           name="name"
-          value={name}
-          onChange={handleName}
-        />
+          rules={[{ required: true, message: "Please input your name!" }]}
+        >
+          <Input placeholder="Enter your name" />
+        </Form.Item>
 
-        <button type="submit">Sign Up</button>
-      </form>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" block loading={isLoading}>
+            Sign Up
+          </Button>
+        </Form.Item>
+      </Form>
 
-      { errorMessage && <p className="error-message">{errorMessage}</p> }
-
-      <p>Already have account?</p>
-      <Link to={"/login"}> Login</Link>
+      <Typography.Paragraph style={{ textAlign: 'center' }}>
+        Already have an account? <Link to="/login">Login here</Link>
+      </Typography.Paragraph>
     </div>
-  )
+    </div>
+  );
 }
 
 export default AdminSignUp;
