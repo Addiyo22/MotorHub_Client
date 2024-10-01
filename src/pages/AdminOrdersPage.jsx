@@ -119,23 +119,22 @@ function AdminOrdersPage() {
       title: 'Actions',
       key: 'actions',
       render: (text, order) => (
-        <>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
           <Button
             type="primary"
             onClick={() => handleAcceptOrder(order._id)}
-            disabled={order.status === 'accepted'}
+            disabled={order.status === 'accepted' || order.status === 'rejected'}
           >
             Accept
           </Button>
           <Button
             type="danger"
             onClick={() => handleRejectOrder(order._id)}
-            disabled={order.status === 'rejected'}
-            style={{ marginLeft: 10 }}
+            disabled={order.status === 'rejected' || order.status === 'accepted'}
           >
             Reject
           </Button>
-        </>
+        </div>
       ),
     },
   ];

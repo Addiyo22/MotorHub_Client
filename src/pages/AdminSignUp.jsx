@@ -16,8 +16,8 @@ function AdminSignUp() {
   const handleSignupSubmit = (values) => {
     setIsLoading(true);
 
-    const { email, username, password, name } = values;
-    const requestBody = { email, password, username, name, isAdmin: true };
+    const { email, firstname, password, lastname } = values;
+    const requestBody = { email, password, firstname, lastname, isAdmin: true };
 
     axios
       .post(`${API_URL}/auth/admin/signup`, requestBody)
@@ -54,11 +54,19 @@ function AdminSignUp() {
         </Form.Item>
 
         <Form.Item
-          label="Username"
-          name="username"
-          rules={[{ required: true, message: "Please input your username!" }]}
+          label="Firstname"
+          name="firstname"
+          rules={[{ required: true, message: "Please input your firstname!" }]}
         >
-          <Input placeholder="Enter your username" />
+          <Input placeholder="Enter your firstname" />
+        </Form.Item>
+
+        <Form.Item
+          label="Lastname"
+          name="lastname"
+          rules={[{ required: true, message: "Please input your lastname!" }]}
+        >
+          <Input placeholder="Enter your lastname" />
         </Form.Item>
 
         <Form.Item
@@ -69,14 +77,6 @@ function AdminSignUp() {
           <Input.Password placeholder="Enter your password" />
         </Form.Item>
 
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[{ required: true, message: "Please input your name!" }]}
-        >
-          <Input placeholder="Enter your name" />
-        </Form.Item>
-
         <Form.Item>
           <Button type="primary" htmlType="submit" block loading={isLoading}>
             Sign Up
@@ -85,7 +85,6 @@ function AdminSignUp() {
       </Form>
 
       <Typography.Paragraph style={{ textAlign: 'center' }}>
-        Already have an account? <Link to="/login">Login here</Link>
       </Typography.Paragraph>
     </div>
     </div>

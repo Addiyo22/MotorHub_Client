@@ -19,12 +19,18 @@ import AdminOrdersPage from "./pages/AdminOrdersPage";
 import AdminSignUp from "./pages/AdminSignUp";
 import CarEditingPage from "./pages/CarEdditingPage";
 import UserManagement from "./pages/UsersManagementPage";
+import CarComparisonPage from "./pages/CarComparisonPage";
+import EditProfilePage from "./pages/EditProfilePage";
+import ErrorPage from "./pages/ErrorPage";
 
 function App() {
   return (
     <div className="App">
       <Navbar />
       <Routes>
+        <Route path="/error" element={ < ErrorPage /> } />
+        <Route path="/profile/:userId/edit" element={ <EditProfilePage /> } />
+        <Route path="/compare" element={ <CarComparisonPage /> } />
         <Route path="/admin/users" element={ <IsAdmin> <UserManagement /> </IsAdmin> } />
         <Route path="/admin/cars/:carId/edit" element={ <IsAdmin> <CarEditingPage /> </IsAdmin> } />
         <Route path="/admin/signup" element={ <IsAdmin> <AdminSignUp /> </IsAdmin> } />

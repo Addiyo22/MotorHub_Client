@@ -15,21 +15,32 @@ function Navbar() {
         style={{
           backgroundColor: '#001529',
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: 'space-evenly',
           alignItems: 'center',
-          position: 'fixed', // Fixes the navbar at the top
+          position: 'fixed',
           top: 0,
           width: '100%',
-          zIndex: 1000, // Ensures the navbar is always on top of other content
+          zIndex: 1000, 
+          padding: '0 20px'
         }}
       >
+        {/* Home Button */}
         <Link to="/">
           <Button type="text" icon={<HomeOutlined />} style={{ color: '#fff' }}>Home</Button>
         </Link>
+
+        {/* Centered Logo */}
+        <div style={{ textAlign: 'center', flex: 1 }}>
+          <Link to="/">
+            <img src="/images/motorhub_logo.png" alt="Logo" style={{ width: '100px', marginLeft: '35rem', marginTop: '30px' }} />
+          </Link>
+        </div>
+
+        {/* Menu */}
         <Menu
           theme="dark"
           mode="horizontal"
-          style={{ flex: 1, justifyContent: 'flex-end', borderBottom: 'none' }}
+          style={{ justifyContent: 'flex-end', borderBottom: 'none', flex: 1 }}
         >
           {isLoggedIn ? (
             <>

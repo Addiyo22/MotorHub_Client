@@ -69,7 +69,7 @@ function LoginPage() {
         </Form>
 
         <Space direction="vertical" style={{ width: '100%', textAlign: 'center' }}>
-          <p>Don't have an account yet? <Link to="/signup">Sign Up</Link></p>
+          <p style={{color: 'black'}}>Don't have an account yet? <Link to="/signup">Sign Up</Link></p>
         </Space>
       </div>
     </div>

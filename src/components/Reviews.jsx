@@ -71,6 +71,7 @@ function Reviews() {
                         type="link"
                         onClick={() => handleDeleteReview(review._id)}
                         danger
+                        key='delete'
                         style={{ paddingLeft: 0 }}
                       >
                         Delete Review
@@ -82,7 +83,7 @@ function Reviews() {
               <Card.Meta
                 title={
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Text strong>{review.user?.username || 'Anonymous'}</Text>
+                    <Text strong>{`${review.user?.firstname || ''} ${review.user?.lastname || ''}`.trim() || 'Anonymous'}</Text>
                     <Rate disabled defaultValue={review.rating} />
                   </div>
                 }

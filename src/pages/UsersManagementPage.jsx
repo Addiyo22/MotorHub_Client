@@ -59,15 +59,17 @@ function UserManagement() {
 
   const columns = [
     {
-      title: 'Username',
-      dataIndex: 'username',
-      key: 'username',
-      render: (text, record) => <Typography.Text>{text} ({record.email})</Typography.Text>,
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      render: (text, record) => <Typography.Text>({record.email})</Typography.Text>,
     },
     {
       title: 'Name',
-      dataIndex: 'name',
       key: 'name',
+      render: (text, record) => (
+        <Typography.Text>{`${record.firstname} ${record.lastname}`}</Typography.Text>
+      ),
     },
     {
       title: 'Role',

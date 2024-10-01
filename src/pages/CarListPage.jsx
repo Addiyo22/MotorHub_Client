@@ -113,6 +113,14 @@ function CarListPage() {
                         <Button danger block onClick={() => handleDelete(car._id)} key="delete">
                           Delete Car
                         </Button>,
+                        <Link to={`/cars/${car._id}`} key="view">
+                          <Button type="primary" block>
+                            View Details
+                          </Button>
+                        </Link>,
+                        <Link to={`/cars/${car._id}/configure`} key="configure">
+                          <Button block>Configure</Button>
+                        </Link>,
                       ]
                     : []),
                 ]}

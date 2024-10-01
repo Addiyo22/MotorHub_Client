@@ -1,0 +1,36 @@
+.error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f5f7f9;
+  }
+  
+  .error-content {
+    text-align: center;
+    padding: 50px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .error-title {
+    font-size: 6rem;
+    font-weight: bold;
+    color: #ff4d4f;
+  }
+  
+  .error-text {
+    font-size: 1.5rem;
+    color: #595959;
+    margin: 20px 0;
+  }
+  
+  .error-button {
+    background-color: #007bff;
+    border-color: #007bff;
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    border-radius: 6px;
+  }
+  

@@ -1,0 +1,51 @@
+.comparison-container {
+    padding: 40px;
+    background-color: #f5f7f9;
+    min-height: 100vh;
+  }
+  
+  .comparison-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #001529;
+  }
+  
+  .car-selectors {
+    margin-bottom: 40px;
+  }
+  
+  .car-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  
+  .comparison-table {
+    margin-top: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ant-table-cell {
+    font-size: 1.2rem;
+    padding: 16px;
+    text-align: center;
+  }
+  
+  .empty-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .empty-text {
+    font-size: 1.2rem;
+    color: #595959;
+  }
+  

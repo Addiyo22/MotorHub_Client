@@ -10,30 +10,26 @@ const { Title } = Typography;
 
 function SignupPage() {
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
+  const [firstname, setFirstname] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [lastname, setLastName] = useState("");
   const [errorMessage, setErrorMessage] = useState(undefined);
   const navigate = useNavigate();
 
-  const handleUsername = (e) => setUsername(e.target.value)
+  const handleFirstname = (e) => setFirstname(e.target.value)
   const handleEmail = (e) => setEmail(e.target.value);
   const handlePassword = (e) => setPassword(e.target.value);
-  const handleName = (e) => setName(e.target.value);
+  const handleLastName = (e) => setLastName(e.target.value);
 
   const handleSignupSubmit = async (values) => {
-    // Correctly destructure the values from the form submission
-    const { email, username, password, name } = values;
+    const { email, firstname, password, lastname } = values;
   
-    // Construct the requestBody using the destructured values
-    const requestBody = { email, username, password, name };
+    const requestBody = { email, firstname, password, lastname };
   
     try {
-      // Send the request to the backend with the correctly constructed requestBody
       await axios.post(`${API_URL}/auth/signup`, requestBody);
-      navigate("/login"); // Redirect to login page on successful signup
+      navigate("/login");
     } catch (error) {
-      // Handle any errors that occur during signup
       const errorDescription = error.response?.data?.message || "Signup failed. Please try again.";
       setErrorMessage(errorDescription);
     }
@@ -53,19 +49,25 @@ function SignupPage() {
           <Form.Item
             label="Email"
             name="email"
-            
-
             rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}
           >
             <Input placeholder="Enter your email" onChange={handleEmail}/>
           </Form.Item>
 
           <Form.Item
-            label="Username"
-            name="username"
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            label="First Name"
+            name="firstname"
+            rules={[{ required: true, message: 'Please input your firstname!' }]}
           >
-            <Input placeholder="Enter your username" onChange={handleUsername}/>
+            <Input placeholder="Enter your Firstname" onChange={handleFirstname}/>
+          </Form.Item>
+          
+          <Form.Item
+            label="Last Name"
+            name="lastname"
+            rules={[{ required: true, message: 'Please input your lastname!' }]}
+          >
+            <Input placeholder="Enter your lastname" onChange={handleFirstname} />
           </Form.Item>
 
           <Form.Item
@@ -76,13 +78,7 @@ function SignupPage() {
             <Input.Password placeholder="Enter your password" onChange={handlePassword}/>
           </Form.Item>
 
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[{ required: true, message: 'Please input your name!' }]}
-          >
-            <Input placeholder="Enter your name" onChange={handleName} />
-          </Form.Item>
+          
 
           {errorMessage && <Alert message={errorMessage} type="error" showIcon style={{ marginBottom: '20px' }} />}
 

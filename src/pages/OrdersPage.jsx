@@ -1,20 +1,20 @@
-// OrdersPage.jsx
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Card, Row, Col, Typography, Alert, Button } from 'antd';
+import { Table, Typography, Alert, Spin, Card } from 'antd';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 function OrdersPage() {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const { userId } = useParams();
-  const { Meta } = Card;
 
   useEffect(() => {
     const fetchOrders = async () => {
+      setLoading(true);
       try {
         const authToken = localStorage.getItem('authToken');
         const response = await axios.get(`${API_URL}/user/${userId}/orders`, {
@@ -25,81 +25,78 @@ function OrdersPage() {
         setOrders(response.data);
       } catch (error) {
         setErrorMessage('Failed to load orders. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchOrders();
   }, [userId]);
 
+  const columns = [
+    {
+      title: 'Car',
+      dataIndex: 'car',
+      key: 'car',
+      render: (_, order) => {
+        const car = order.configuration?.car;
+        const carMake = car?.make || 'Unknown Make';
+        const carModel = car?.model || 'Unknown Model';
+        const carTrim = car?.trim || '';
+        return (
+          <Card hoverable cover={<img alt={carMake} src={car.images?.[0]} style={{ height: '150px', objectFit: 'cover' }} />}>
+            <h3>{carMake} {carModel} {carTrim}</h3>
+          </Card>
+        );
+      },
+    },
+    {
+      title: 'Details',
+      dataIndex: 'configuration',
+      key: 'details',
+      render: (configuration) => (
+        <>
+          <p>Engine: {configuration?.engine || 'Unknown'}</p>
+          <p>Transmission: {configuration?.transmission || 'Unknown'}</p>
+          <p>Exterior Color: {configuration?.exteriorColor || 'Unknown'}</p>
+          <p>Interior Color: {configuration?.interiorColor || 'Unknown'}</p>
+          <p>Features: {Array.isArray(configuration?.features) ? configuration.features.join(', ') : 'No features available'}</p>
+        </>
+      ),
+    },
+    {
+      title: 'Total Price',
+      dataIndex: 'totalPrice',
+      key: 'totalPrice',
+      render: (price) => `€${price?.toFixed(2) || 'Unknown'}`,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => <p>{status || 'Unknown'}</p>,
+    },
+  ];
+
   return (
-    <div className="OrdersPage" style={{ padding: '20px', backgroundColor: 'white', height: '100vh', width: '100vw' }}>
+    <div className="OrdersPage" style={{ padding: '20px', backgroundColor: 'white', minHeight: '100vh' }}>
       <Title level={2} style={{ textAlign: 'center', marginBottom: '20px', color: '#002766', paddingTop: '25px' }}>
         Your Orders
       </Title>
-      {errorMessage && <Alert message={errorMessage} type="error" showIcon style={{ marginBottom: '20px' }} />}
-      {orders.length > 0 ? (
-        <Row gutter={[16, 16]} justify="center">
-          {orders.map((order) => {
-            const car = order.configuration?.car;
 
-            return (
-              <Col xs={24} sm={12} md={8} lg={6} key={order._id}>
-                <Card
-                  hoverable
-                  style={{ borderRadius: '8px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)' }}
-                  cover={
-                    car?.images?.length > 0 ? (
-                      <img
-                        src={car.images[0]}
-                        alt={`${car.make} ${car.model}`}
-                        style={{ height: '200px', objectFit: 'cover', borderRadius: '8px 8px 0 0' }}
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          height: '200px',
-                          backgroundColor: '#f0f0f0',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderRadius: '8px 8px 0 0',
-                        }}
-                      >
-                        No Image Available
-                      </div>
-                    )
-                  }
-                >
-                  <Meta
-                    title={`${car ? `${car.make} ${car.model} ${car.trim || ''}` : 'Car details unavailable'}`}
-                    description={
-                      <>
-                        <Text>Engine: {order.configuration?.engine || 'Unknown'}</Text>
-                        <br />
-                        <Text>Transmission: {order.configuration?.transmission || 'Unknown'}</Text>
-                        <br />
-                        <Text>Exterior Color: {order.configuration?.exteriorColor || 'Unknown'}</Text>
-                        <br />
-                        <Text>Interior Color: {order.configuration?.interiorColor || 'Unknown'}</Text>
-                        <br />
-                        <Text>
-                          Features:{' '}
-                          {Array.isArray(order.configuration?.features)
-                            ? order.configuration.features.join(', ')
-                            : 'No features available'}
-                        </Text>
-                        <br />
-                        <Text strong>Total Price: €{order.totalPrice || 'Unknown'}</Text>
-                        <br />
-                        <Text>Status: {order.status || 'Unknown'}</Text>
-                      </>
-                    }
-                  />
-                </Card>
-              </Col>
-            );
-          })}
-        </Row>
+      {errorMessage && <Alert message={errorMessage} type="error" showIcon style={{ marginBottom: '20px' }} />}
+
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+          <Spin size="large" />
+        </div>
+      ) : orders.length > 0 ? (
+        <Table
+          dataSource={orders}
+          columns={columns}
+          rowKey="_id"
+          pagination={{ pageSize: 10 }}
+        />
       ) : (
         <Title level={3} style={{ textAlign: 'center', marginTop: '20px', color: '#002766' }}>
           No Orders yet!
