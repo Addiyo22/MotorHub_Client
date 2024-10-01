@@ -46,8 +46,10 @@ function App() {
         <Route path="/signup" element={<IsAnon> <SignupPage /> </IsAnon>} />
         <Route path="/login" element={<IsAnon> <LoginPage /></IsAnon> } />
         <Route path="/dashboard" element={ <IsPrivate> <UserDashboard /> </IsPrivate> } />
+        <Route path="*" element={<ErrorPage/>} />
       </Routes>
     </div>
+
   );
 }
 export default App;
