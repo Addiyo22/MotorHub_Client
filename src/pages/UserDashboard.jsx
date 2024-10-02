@@ -8,18 +8,17 @@ import '../styles/DashboardStyles.css';
 const { Content } = Layout;
 const { Title } = Typography;
 
-// Sample image URLs (replace these with your own images or hosted ones)
 const images = {
-  createCar: '/public/images/createcar.webp', // Placeholder for Create Car
-  configurations: '/public/images/vecteezy_gear-mechanism-and-settings-vector-icon_5693230.jpg',
-  compareCars: '/public/images/3_(11).jpg',
-  myOrders: '/public/images/vecteezy_shopping-cart-icon-vector-illustration_.jpg',
-  viewCars: '/public/images/vecteezy_binoculars-icon-template-black-color-editable_6692502.jpg',
-  viewOrders: '/public/images/vecteezy_shopping-cart-set-of-shopping-cart-icon-on-white_9157885.jpg',
-  createAdmin: '/public/images/vecteezy_job-application-vector-icon-design_15981725.jpg',
-  viewInventory: '/public/images/vecteezy_delivery-vector-icon-design_16595976.jpg',
-  viewUsers: '/public/images/vecteezy_view-icon-in-trendy-outline-style-isolated-on-white_31692893.jpg',
-  editProfile: '/public/images/editProfile.avif',
+  createCar: '/images/createcar.webp', 
+  configurations: '/images/vecteezy_gear-mechanism-and-settings-vector-icon_5693230.jpg',
+  compareCars: '/images/3_(11).jpg',
+  myOrders: '/images/vecteezy_shopping-cart-icon-vector-illustration_.jpg',
+  viewCars: '/images/vecteezy_binoculars-icon-template-black-color-editable_6692502.jpg',
+  viewOrders: '/images/vecteezy_shopping-cart-set-of-shopping-cart-icon-on-white_9157885.jpg',
+  createAdmin: '/images/vecteezy_job-application-vector-icon-design_15981725.jpg',
+  viewInventory: '/images/vecteezy_delivery-vector-icon-design_16595976.jpg',
+  viewUsers: '/images/vecteezy_view-icon-in-trendy-outline-style-isolated-on-white_31692893.jpg',
+  editProfile: '/images/editProfile.avif',
 };
 
 function UserDashboard() {
@@ -124,7 +123,7 @@ function UserDashboard() {
                       cover={
                         <img
                           alt={item.text}
-                          src={item.image} // Dynamically load images from dashboardItems
+                          src={item.image}
                           style={{ height: '200px', objectFit: 'cover', borderRadius: '12px 12px 0 0' }}
                         />
                       }
