@@ -26,7 +26,6 @@ function CarEditingPage() {
           },
         });
 
-        // Set form fields for colors and other car details
         form.setFieldsValue({
           make: car.make || '',
           model: car.model ? car.model.join(', ') : '',
@@ -35,10 +34,10 @@ function CarEditingPage() {
           engine: car.engine ? car.engine.join(', ') : '',
           engineHorsepower: car.engineHorsepower ? car.engineHorsepower.join(', ') : '',
           transmission: car.transmission ? car.transmission.join(', ') : '',
-          interiorColorName: car.interiorColor[0]?.name || '', // Set the name of the first interior color
-          interiorColorHex: car.interiorColor[0]?.hex || '',   // Set the hex of the first interior color
-          exteriorColorName: car.exteriorColor[0]?.name || '', // Set the name of the first exterior color
-          exteriorColorHex: car.exteriorColor[0]?.hex || '',   // Set the hex of the first exterior color
+          interiorColorName: car.interiorColor[0]?.name || '', 
+          interiorColorHex: car.interiorColor[0]?.hex || '',   
+          exteriorColorName: car.exteriorColor[0]?.name || '', 
+          exteriorColorHex: car.exteriorColor[0]?.hex || '',   
           features: car.features ? car.features.join(', ') : '',
           price: car.price || '',
           quantity: car.quantity || null,
@@ -54,14 +53,14 @@ function CarEditingPage() {
     fetchCarDetails();
   }, [carId, form]);
 
-  // Handle input changes
+
   const handleInputChange = (changedValues, allValues) => {
-    // This function updates the form data when fields change.
+
   };
 
-  // Handle image file input change
+
   const handleImageChange = ({ file }) => {
-    setImage(file); // Set the selected image file in state
+    setImage(file); 
   };
 
   // Handle form submission
@@ -83,6 +82,13 @@ function CarEditingPage() {
       interiorColor: [{ name: values.interiorColorName, hex: values.interiorColorHex }], // Combine name and hex
       exteriorColor: [{ name: values.exteriorColorName, hex: values.exteriorColorHex }], // Combine name and hex
     };
+
+    if (!values.quantity) {
+      delete carDetails.quantity;
+    }
+    if (!values.location) {
+      delete carDetails.location;
+    }
 
     const formDataToSubmit = new FormData();
     formDataToSubmit.append('carDetails', JSON.stringify(carDetails));

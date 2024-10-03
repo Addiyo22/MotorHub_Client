@@ -13,13 +13,13 @@ function ReviewForm({ carId, refreshReviews }) {
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Handle form submission
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setErrorMessage('');
     setSuccessMessage('');
 
-    // Validate input
+
     if (!rating || rating < 1 || rating > 5) {
       setErrorMessage('Rating must be between 1 and 5.');
       setIsSubmitting(false);
@@ -68,7 +68,7 @@ function ReviewForm({ carId, refreshReviews }) {
         border: '1px solid #f0f0f0',
         borderRadius: '8px',
         marginBottom: '20px',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', // Adds subtle shadow for depth
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', 
       }}
     >
       <h2>Leave a Review</h2>

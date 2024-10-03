@@ -16,7 +16,6 @@ function CarPage() {
     const fetchCar = async () => {
       try {
         const response = await axios.get(`${API_URL}/cars/${carId}`);
-        console.log('Car data:', response.data);
         setCar(response.data.car);
       } catch (error) {
         console.error('Error fetching cars:', error);
@@ -35,7 +34,6 @@ function CarPage() {
     return <Spin size="large" style={{ display: 'block', margin: '20px auto' }} />;
   }
 
-  // Map color data to visually appealing tags
   const renderColorTags = (colors) =>
     colors.map((color) => (
       <Tag
@@ -52,40 +50,66 @@ function CarPage() {
     ));
 
   return (
-    <div style={{ padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-      <Row gutter={[16, 16]} style={{ maxWidth: '1200px', width: '100%' }}>
+    <div
+      style={{
+        minHeight: '100vh', 
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center', 
+        flexDirection: 'column',
+        padding: '20px',
+        width: '100vw'
+      }}
+    >
+      <Row gutter={[16, 16]} style={{ maxWidth: '1200px', width: '100vw' }}>
         <Col xs={24} md={18}>
           <Card
             cover={
-              car.images && car.images.length > 0 && (
+              car.images && car.images.length > 0 ? (
                 <img
                   src={car.images[0]}
                   alt={`${car.make} ${car.model}`}
                   style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '10px' }}
                 />
+              ) : (
+                <div
+                  style={{
+                    width: '100%',
+                    height: '400px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#f0f0f0',
+                    borderRadius: '10px',
+                  }}
+                >
+                  <Text>No Image Available</Text>
+                </div>
               )
             }
             style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
           >
             <Title level={3}>{`${car.make} ${Array.isArray(car.model) ? car.model.join(', ') : car.model}`}</Title>
-            <Text strong>Year:</Text> {car.year}
+            <Text strong>Year:</Text> {car.year || 'N/A'}
             <br />
-            <Text strong>Engine:</Text> {Array.isArray(car.engine) ? car.engine.join(', ') : car.engine}
+            <Text strong>Engine:</Text> {Array.isArray(car.engine) ? car.engine.join(', ') : car.engine || 'N/A'}
             <br />
             <Text strong>Engine Horsepower:</Text>{' '}
-            {Array.isArray(car.engineHorsepower) ? car.engineHorsepower.join(', ') : car.engineHorsepower} HP
+            {Array.isArray(car.engineHorsepower) ? car.engineHorsepower.join(', ') : car.engineHorsepower || 'N/A'} HP
             <br />
             <Text strong>Transmission:</Text>{' '}
-            {Array.isArray(car.transmission) ? car.transmission.join(', ') : car.transmission}
+            {Array.isArray(car.transmission) ? car.transmission.join(', ') : car.transmission || 'N/A'}
             <br />
-            <Text strong>Interior Colors:</Text> {renderColorTags(car.interiorColor)}
+            <Text strong>Interior Colors:</Text>{' '}
+            {car.interiorColor && car.interiorColor.length > 0 ? renderColorTags(car.interiorColor) : 'N/A'}
             <br />
-            <Text strong>Exterior Colors:</Text> {renderColorTags(car.exteriorColor)}
+            <Text strong>Exterior Colors:</Text>{' '}
+            {car.exteriorColor && car.exteriorColor.length > 0 ? renderColorTags(car.exteriorColor) : 'N/A'}
             <br />
-            <Text strong>Price:</Text> ${car.price}
+            <Text strong>Price:</Text> {car.price ? `€${car.price}` : 'N/A'}
             <br />
             <Text strong>Features:</Text>{' '}
-            {Array.isArray(car.features) ? car.features.join(', ') : 'No features available'}
+            {Array.isArray(car.features) && car.features.length > 0 ? car.features.join(', ') : 'No features available'}
           </Card>
         </Col>
       </Row>

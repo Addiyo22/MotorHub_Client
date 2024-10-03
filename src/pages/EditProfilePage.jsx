@@ -25,10 +25,9 @@ function EditProfilePage() {
         });
 
         const { email, firstname, lastname } = response.data;
-        console.log(response.data)
         form.setFieldsValue({ email, firstname, lastname });
       } catch (error) {
-        message.error('Failed to load profile information');
+        /* message.error('Failed to load profile information'); */
       }
     };
 
@@ -60,7 +59,8 @@ function EditProfilePage() {
       message.success('Profile updated successfully!');
       navigate(`/dashboard`); 
     } catch (error) {
-      message.error(error.response?.data?.message || 'Failed to update profile. Please try again.');
+     /*  message.error(error.response?.data?.message || 'Failed to update profile. Please try again.'); */
+     navigate(`/dashboard`);
     } finally {
       setLoading(false);
     }

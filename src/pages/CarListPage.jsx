@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/auth.context';
-import { Layout, Card, Row, Col, Button, Typography } from 'antd';
+import { Layout, Card, Row, Col, Button, Typography, Space } from 'antd';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
 const { Header, Content, Footer } = Layout;
@@ -92,40 +92,70 @@ function CarListPage() {
                     </div>
                   )
                 }
-                actions={[
-                  ...(isLoggedIn && !checkAdmin
-                    ? [
-                        <Link to={`/cars/${car._id}`} key="view">
-                          <Button type="primary" block>
-                            View Details
-                          </Button>
-                        </Link>,
-                        <Link to={`/cars/${car._id}/configure`} key="configure">
-                          <Button block>Configure</Button>
-                        </Link>,
-                      ]
-                    : []),
-                  ...(isLoggedIn && checkAdmin
-                    ? [
+              >
+                <Meta
+                  title={`${car.make} ${car.model}`}
+                  description={`€${car.price}`}
+                />
+
+                {!car.available ? (
+                  <>
+                  <Text type="danger" style={{ display: 'block', marginTop: '10px' }}>
+                    Not Available
+                  </Text>
+                  <Space direction="vertical" size="middle" style={{ width: '100%', paddingTop: '15px' }}>
+                  {isLoggedIn && checkAdmin && (
+                      <>
                         <Link to={`/admin/cars/${car._id}/edit`} key="edit">
                           <Button block>Edit Car</Button>
-                        </Link>,
+                        </Link>
                         <Button danger block onClick={() => handleDelete(car._id)} key="delete">
                           Delete Car
-                        </Button>,
+                        </Button>
                         <Link to={`/cars/${car._id}`} key="view">
                           <Button type="primary" block>
                             View Details
                           </Button>
-                        </Link>,
+                          </Link>
+                      </>
+                    )}
+                  </Space>
+                  </>
+                ) : (
+                  <Space direction="vertical" size="middle" style={{ width: '100%', paddingTop: '15px' }}>
+                    {(isLoggedIn && !checkAdmin) && (
+                      <>
+                        <Link to={`/cars/${car._id}`} key="view">
+                          <Button type="primary" block>
+                            View Details
+                          </Button>
+                        </Link>
                         <Link to={`/cars/${car._id}/configure`} key="configure">
                           <Button block>Configure</Button>
-                        </Link>,
-                      ]
-                    : []),
-                ]}
-              >
-                <Meta title={`${car.make} ${car.model}`} description={`€${car.price}`} />
+                        </Link>
+                      </>
+                    )}
+
+                    {isLoggedIn && checkAdmin && (
+                      <>
+                        <Link to={`/admin/cars/${car._id}/edit`} key="edit">
+                          <Button block>Edit Car</Button>
+                        </Link>
+                        <Button danger block onClick={() => handleDelete(car._id)} key="delete">
+                          Delete Car
+                        </Button>
+                        <Link to={`/cars/${car._id}`} key="view">
+                          <Button type="primary" block>
+                            View Details
+                          </Button>
+                        </Link>
+                        <Link to={`/cars/${car._id}/configure`} key="configure">
+                          <Button block>Configure</Button>
+                        </Link>
+                      </>
+                    )}
+                  </Space>
+                )}
               </Card>
             </Col>
           ))}

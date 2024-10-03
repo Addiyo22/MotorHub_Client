@@ -12,7 +12,6 @@ function AdminSignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Handle form submission
   const handleSignupSubmit = (values) => {
     setIsLoading(true);
 

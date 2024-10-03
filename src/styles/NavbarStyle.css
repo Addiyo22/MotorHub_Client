@@ -1,0 +1,59 @@
+.navbar-header {
+    background-color: #001529;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 0 20px;
+  }
+  
+  .navbar-left,
+  .navbar-right {
+    flex: 1;
+  }
+  
+  .navbar-center {
+    position: absolute; /* Position logo in the center */
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
+  }
+  
+  .navbar-logo {
+    width: 100px;
+    padding-top: 30px;
+  }
+  
+  .navbar-hamburger {
+    display: none;
+    color: white;
+  }
+  
+  /* For screens 768px and larger */
+  @media (min-width: 768px) {
+    .navbar-hamburger {
+      display: none; /* Hide the hamburger icon on larger screens */
+    }
+  
+    .navbar-menu {
+      display: flex !important; /* Display the full horizontal menu on larger screens */
+    }
+  }
+  
+  /* For screens smaller than 768px */
+  @media (max-width: 767px) {
+    .navbar-hamburger {
+      display: block !important; /* Show the hamburger icon on smaller screens */
+    }
+  
+    .navbar-menu {
+      display: none !important; /* Hide the full horizontal menu on smaller screens */
+    }
+  
+    .navbar-logo {
+      margin-right: auto; /* Ensure the logo is aligned properly */
+    }
+  }
+  

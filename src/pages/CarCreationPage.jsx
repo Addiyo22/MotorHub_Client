@@ -59,6 +59,13 @@ function CarCreationPage() {
       features: formData.features.split(',').map((f) => f.trim()),
     };
 
+    if (!formData.quantity) {
+      delete carDetails.quantity;
+    }
+    if (!formData.location) {
+      delete carDetails.location;
+    }
+
     const formDataToSubmit = new FormData();
     formDataToSubmit.append('carDetails', JSON.stringify(carDetails));
     if (image) formDataToSubmit.append('image', image);
@@ -146,12 +153,12 @@ function CarCreationPage() {
           </Checkbox>
         </Form.Item>
 
-        <Form.Item label="Quantity" required style={{ width: '30rem' }}>
-          <Input type="number" name="quantity" value={formData.quantity} onChange={handleInputChange} />
+        <Form.Item label="Quantity (ONLY FOR INVENTORY)"  style={{ width: '30rem' }}>
+          <Input type="number" name="quantity" value={formData.quantity} onChange={handleInputChange} placeholder="ONLY FOR INVENTORY"/>
         </Form.Item>
 
-        <Form.Item label="Location" style={{ width: '30rem' }}>
-          <Input name="location" value={formData.location} onChange={handleInputChange} />
+        <Form.Item label="Location (ONLY FOR INVENTORY)" style={{ width: '30rem' }}>
+          <Input name="location" value={formData.location} onChange={handleInputChange} placeholder="ONLY FOR INVENTORY"/>
         </Form.Item>
 
         <Form.Item label="Car Image">
