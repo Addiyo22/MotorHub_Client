@@ -58,10 +58,11 @@ function CarPage() {
         alignItems: 'center', 
         flexDirection: 'column',
         padding: '20px',
-        width: '100vw'
+        width: '100vw',
+        paddingTop: '100px'
       }}
     >
-      <Row gutter={[16, 16]} style={{ maxWidth: '1200px', width: '100vw' }}>
+      <Row gutter={[16, 16]} style={{ maxWidth: '1200px', width: '100vw', paddingLeft: '200px' }}>
         <Col xs={24} md={18}>
           <Card
             cover={

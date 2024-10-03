@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Carousel, Layout, Typography, Spin, Button, Alert, Row, Col } from 'antd';
 import { Link } from 'react-router-dom';
-import VideoPlayer from '../components/VideoPlayer';  // Your existing video player component
+import VideoPlayer from '../components/VideoPlayer'; 
 import '../styles/HomePageStyle.css'
 
 const { Content, Footer } = Layout;
@@ -15,7 +15,6 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch car images from the API
   useEffect(() => {
     const fetchCarImages = async () => {
       try {
@@ -40,12 +39,10 @@ function HomePage() {
           Welcome to MotorHub
         </Title>
 
-        {/* Custom Video Player */}
         <div className="video-container">
           <VideoPlayer />
         </div>
 
-        {/* Section to display YouTube videos */}
         <Title level={3} className="explore-title">
           Check Some of "Our" Cool Car Reviews
         </Title>
@@ -134,16 +131,63 @@ function HomePage() {
               )}
             </Carousel>
 
-            {/* Links to Inventory and Compare Car Pages */}
-            <div style={{ marginTop: '20px' }}>
-              <Link to="/inventory">
-                <Button type="primary" size="large" style={{ marginRight: '10px' }}>
-                  Go to Inventory
+            {/* Section for "View Cars" */}
+            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+              <Link to="/cars">
+                <Button
+                  type="primary"
+                  size="large"
+                  style={{
+                    color: '#fff',
+                    width: '20rem',
+
+                  }}
+                >
+                  View Cars
                 </Button>
               </Link>
+            </div>
+
+            {/* Section for "Compare Cars" */}
+            <div style={{ marginTop: '40px', textAlign: 'center', width: '' }}>
+              <img
+                src="/images/inventory.webp"
+                alt="Compare Cars"
+                style={{ width: '80vw', borderRadius: '10px', marginBottom: '10px' }}
+              />
               <Link to="/compare">
-                <Button type="default" size="large">
+                <Button
+                  type="primary"
+                  size="large"
+                  style={{
+                    backgroundImage: 'url("/images/compare-background.jpg")',
+                    backgroundSize: 'cover',
+                    color: '#fff',
+                    width: '20rem',
+                  }}
+                >
                   Compare Cars
+                </Button>
+              </Link>
+            </div>
+
+            {/* Section for "View our Inventory" */}
+            <div style={{ marginTop: '40px', textAlign: 'center' }}>
+              <img
+                src="/images/compare.webp"
+                alt="Inventory"
+                style={{  width: '80vw', borderRadius: '10px', marginBottom: '10px' }}
+              />
+              <Link to="/inventory">
+                <Button
+                  type="primary"
+                  size="large"
+                  style={{
+                    color: '#fff',
+                    width: '20rem',
+                  }}
+                >
+                  View our Inventory
                 </Button>
               </Link>
             </div>

@@ -69,9 +69,14 @@ function CarComparisonPage() {
     },
     {
       key: 'Transmission',
+      car1: `${car1Details?.car.engineHorsepower} HP` ,
+      car2: `${car1Details?.car.engineHorsepower} HP` ,
+    },
+    {
+      key: 'Transmission',
       car1: car1Details?.car.transmission || 'N/A',
       car2: car2Details?.car.transmission || 'N/A',
-    },
+    }, 
     {
       key: 'Price',
       car1: car1Details?.car.price ? `€${car1Details.car.price}` : 'N/A',
@@ -86,12 +91,6 @@ function CarComparisonPage() {
       key: 'car1',
       align: 'center',
     },
-    /* {
-        title: 'Feature',
-        dataIndex: 'key',
-        key: 'key',
-        align: 'center',
-      }, */
     {
       title: 'Car 2',
       dataIndex: 'car2',
@@ -102,7 +101,7 @@ function CarComparisonPage() {
 
   return (
     <div className="comparison-container" style={{width: '95vw'}}>
-      <Title level={2} className="comparison-title">Compare Two Cars</Title>
+      <Title level={2} className="comparison-title">Compare Cars</Title>
 
       <Row gutter={32} className="car-selectors">
         <Col span={12}>

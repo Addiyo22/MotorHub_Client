@@ -87,35 +87,37 @@
   }
 
   @media (max-width: 768px) {
-    .home-title {
-      font-size: 1.8rem;
-    }
-  
-    .explore-title {
-      font-size: 1.2rem;
-    }
-  
-    .carousel-item {
-      height: 350px;
-    }
-  
-    .carousel-image {
-      max-height: 350px;
-    }
-  
-    .video-container {
-      width: 100%;
-      padding: 0;
-    }
-  
-    .view-cars-button {
-      width: 100%;
-    }
-
-    .youtube-video iframe {
-      width: 100%;
-    }
+  .carousel-image {
+    width: 100%; /* Make the carousel image responsive */
+    height: auto;
   }
+
+  .carousel-container {
+    width: 100%; /* Ensure the carousel takes full width */
+  }
+
+  .youtube-video iframe {
+    width: 100%; /* Make YouTube iframes fully responsive */
+    height: auto;
+  }
+
+  .explore-title {
+    font-size: 1.5rem; /* Adjust title size for small screens */
+  }
+
+  .home-title {
+    font-size: 2rem; /* Adjust main title size for small screens */
+  }
+
+  .button-container {
+    text-align: center;
+  }
+
+  .button-container button {
+    width: 80vw; /* Make buttons fill more space on smaller screens */
+  }
+}
+
   
   @media (max-width: 480px) {
     .home-title {

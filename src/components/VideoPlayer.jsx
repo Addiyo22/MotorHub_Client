@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Alert } from 'antd';
 
+
 function VideoPlayer() {
   const [videoError, setVideoError] = useState(false);
 
@@ -9,7 +10,7 @@ function VideoPlayer() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+    <div className='videoContainer' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
       <video
         style={{ maxWidth: '100%', borderRadius: '10px' }}
         controls

@@ -5,7 +5,7 @@ import { Layout, Button, Typography, Row, Col, Card } from 'antd';
 import { PlusCircleOutlined, CarOutlined, ShoppingCartOutlined, UserOutlined, AppstoreAddOutlined } from '@ant-design/icons';
 import '../styles/DashboardStyles.css'; 
 
-const { Content } = Layout;
+const { Content, Footer } = Layout;
 const { Title } = Typography;
 
 const images = {
@@ -146,7 +146,11 @@ function UserDashboard() {
           </>
         )}
       </Content>
+      <Footer className="footer">
+        ©2024 MotorHub
+      </Footer>
     </Layout>
+    
   );
 }
 

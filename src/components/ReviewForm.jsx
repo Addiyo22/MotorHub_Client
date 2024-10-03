@@ -69,6 +69,7 @@ function ReviewForm({ carId, refreshReviews }) {
         borderRadius: '8px',
         marginBottom: '20px',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', 
+        width: '80vw'
       }}
     >
       <h2>Leave a Review</h2>
