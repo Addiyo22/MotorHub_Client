@@ -429,6 +429,6 @@ make: {
 
 ### Slides
 
-[Slides Link](https://docs.google.com/presentation/d/1zndKZ8DC-_i391alptPKsAKanCSXTrLVL39L3xtEjz8/edit?usp=sharing)
+[Slides Link](https://docs.google.com/presentation/d/1TaGR9d1AFmBmqglGvIQXrN1g6N09dVDibR9ff7s7FEY/edit#slide=id.p)
 
 ---
