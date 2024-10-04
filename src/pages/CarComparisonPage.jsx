@@ -70,7 +70,7 @@ function CarComparisonPage() {
     {
       key: 'Transmission',
       car1: `${car1Details?.car.engineHorsepower} HP` ,
-      car2: `${car1Details?.car.engineHorsepower} HP` ,
+      car2: `${car2Details?.car.engineHorsepower} HP`,
     },
     {
       key: 'Transmission',

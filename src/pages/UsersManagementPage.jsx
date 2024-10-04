@@ -86,6 +86,7 @@ function UserManagement() {
           onConfirm={() => handleDeleteUser(record._id)}
           okText="Yes"
           cancelText="No"
+          disabled={record._id === user?._id}
         >
           <Button type="danger">Delete User</Button>
         </Popconfirm>

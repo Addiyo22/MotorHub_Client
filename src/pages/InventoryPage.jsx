@@ -90,31 +90,36 @@ function InventoryPage() {
                   )
                 }
                 actions={[
-                  <Space direction="horizontal" size="middle" key="actions" style={{ display: 'flex', justifyContent: 'center' }}>
-                    {isLoggedIn && !checkAdmin && (
-                      <>
-                        <Link to={`/cars/${car._id}`} key="view">
-                          <Button type="primary" size="large">View Details</Button>
-                        </Link>
-                        <Link to={`/cars/${car._id}/configure`} key="configure">
-                          <Button size="large">Configure</Button>
-                        </Link>
-                      </>
-                    )}
-                    {isLoggedIn && checkAdmin && (
-                      <>
-                        <Link to={`/admin/cars/${car._id}/edit`} key="edit">
-                          <Button>Edit Car</Button>
-                        </Link>
-                        <Button
-                          danger
-                          onClick={() => handleDelete(car._id)}
-                        >
-                          Delete Car
-                        </Button>
-                      </>
-                    )}
-                  </Space>,
+                  isLoggedIn && (
+                    <Space direction="horizontal" size="middle" key="actions" style={{ display: 'flex', justifyContent: 'center' }}>
+                      {car.available && car.quantity > 0 ? (
+                        <>
+                          <Link to={`/cars/${car._id}`} key="view">
+                            <Button type="primary" size="large">View Details</Button>
+                          </Link>
+                          <Link to={`/cars/${car._id}/configure`} key="configure">
+                            <Button size="large">Configure</Button>
+                          </Link>
+                        </>
+                      ) : (
+                        <Typography.Text type="danger" strong>Car Not Available</Typography.Text>
+                      )}
+                      {checkAdmin && (
+                        <>
+                          <Link to={`/admin/cars/${car._id}/edit`} key="edit">
+                            <Button>Edit Car</Button>
+                          </Link>
+                          
+                          <Button
+                            danger
+                            onClick={() => handleDelete(car._id)}
+                          >
+                            Delete Car
+                          </Button>
+                        </>
+                      )}
+                    </Space>
+                  ),
                 ]}
               >
                 <Meta 

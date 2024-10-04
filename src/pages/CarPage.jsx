@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Card, Typography, Row, Col, Spin, Alert, Tag } from 'antd';
+import { Link } from 'react-router-dom';
+import { Card, Typography, Row, Col, Spin, Alert, Tag, Button } from 'antd';
 import Reviews from '../components/Reviews';
+import { AuthContext } from '../context/auth.context';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
 const { Title, Text } = Typography;
@@ -11,6 +14,8 @@ function CarPage() {
   const { carId } = useParams();
   const [car, setCar] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const { user, isLoggedIn } = useContext(AuthContext);
+  const checkAdmin = user?.isAdmin;
 
   useEffect(() => {
     const fetchCar = async () => {
@@ -111,10 +116,19 @@ function CarPage() {
             <br />
             <Text strong>Features:</Text>{' '}
             {Array.isArray(car.features) && car.features.length > 0 ? car.features.join(', ') : 'No features available'}
+            {isLoggedIn &&(
+              <div style={{display: 'flex', justifyContent: 'center'}}>
+            <Link to={`/cars/${car._id}/configure`} key="configure" >
+                <Button block style={{width: '20rem'}}>Configure</Button>
+            </Link>
+            </div>
+            )}
           </Card>
         </Col>
       </Row>
-      <Reviews carId={carId} />
+      {isLoggedIn && (
+        <Reviews carId={carId} />
+      )}
     </div>
   );
 }
