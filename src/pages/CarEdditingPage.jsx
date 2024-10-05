@@ -3,7 +3,7 @@ import { Form, Input, InputNumber, Checkbox, Button, Upload, message, Typography
 import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import '../styles/CarEdittingPage.css'
+import '../styles/CarEdittingPage.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
 const { Title } = Typography;
@@ -34,10 +34,8 @@ function CarEditingPage() {
           engine: car.engine ? car.engine.join(', ') : '',
           engineHorsepower: car.engineHorsepower ? car.engineHorsepower.join(', ') : '',
           transmission: car.transmission ? car.transmission.join(', ') : '',
-          interiorColorName: car.interiorColor[0]?.name || '', 
-          interiorColorHex: car.interiorColor[0]?.hex || '',   
-          exteriorColorName: car.exteriorColor[0]?.name || '', 
-          exteriorColorHex: car.exteriorColor[0]?.hex || '',   
+          interiorColors: car.interiorColor.map((color) => `${color.name}:${color.hex}`).join(', '), // Comma-separated format
+          exteriorColors: car.exteriorColor.map((color) => `${color.name}:${color.hex}`).join(', '), // Comma-separated format
           features: car.features ? car.features.join(', ') : '',
           price: car.price || '',
           quantity: car.quantity || null,
@@ -52,11 +50,6 @@ function CarEditingPage() {
 
     fetchCarDetails();
   }, [carId, form]);
-
-
-  const handleInputChange = (changedValues, allValues) => {
-
-  };
 
 
   const handleImageChange = ({ file }) => {
@@ -79,8 +72,17 @@ function CarEditingPage() {
       transmission: values.transmission.split(',').map((t) => t.trim()),
       engineHorsepower: values.engineHorsepower.split(',').map((hp) => parseFloat(hp)),
       features: values.features.split(',').map((f) => f.trim()),
-      interiorColor: [{ name: values.interiorColorName, hex: values.interiorColorHex }], // Combine name and hex
-      exteriorColor: [{ name: values.exteriorColorName, hex: values.exteriorColorHex }], // Combine name and hex
+      
+      // Split comma-separated colors in "name:hex" format
+      interiorColor: values.interiorColors.split(',').map((color) => {
+        const [name, hex] = color.trim().split(':');
+        return { name: name.trim(), hex: hex.trim() };
+      }),
+      
+      exteriorColor: values.exteriorColors.split(',').map((color) => {
+        const [name, hex] = color.trim().split(':');
+        return { name: name.trim(), hex: hex.trim() };
+      }),
     };
 
     if (!values.quantity) {
@@ -118,7 +120,6 @@ function CarEditingPage() {
       <Form
         form={form}
         layout="vertical"
-        onValuesChange={handleInputChange}
         onFinish={handleSubmit}
         style={{width: '100vw', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}
       >
@@ -150,20 +151,12 @@ function CarEditingPage() {
           <Input placeholder="Enter transmission type" />
         </Form.Item>
 
-        <Form.Item label="Interior Color Name" name="interiorColorName" style={{ width: '30rem' }} rules={[{ required: true }]}>
-          <Input placeholder="Enter interior color name" />
+        <Form.Item label="Interior Colors (comma-separated with name:hex format)" name="interiorColors" style={{ width: '30rem' }} rules={[{ required: true }]}>
+          <Input placeholder="e.g. Black:#000000, Red:#FF0000" />
         </Form.Item>
 
-        <Form.Item label="Interior Color Hex" name="interiorColorHex" style={{ width: '30rem' }} rules={[{ required: true }]}>
-          <Input placeholder="Enter interior color hex" />
-        </Form.Item>
-
-        <Form.Item label="Exterior Color Name" name="exteriorColorName" style={{ width: '30rem' }} rules={[{ required: true }]}>
-          <Input placeholder="Enter exterior color name" />
-        </Form.Item>
-
-        <Form.Item label="Exterior Color Hex" name="exteriorColorHex" style={{ width: '30rem' }} rules={[{ required: true }]}>
-          <Input placeholder="Enter exterior color hex" />
+        <Form.Item label="Exterior Colors (comma-separated with name:hex format)" name="exteriorColors" style={{ width: '30rem' }} rules={[{ required: true }]}>
+          <Input placeholder="e.g. White:#FFFFFF, Blue:#0000FF" />
         </Form.Item>
 
         <Form.Item label="Features" name="features" style={{ width: '30rem' }}>
@@ -175,18 +168,18 @@ function CarEditingPage() {
         </Form.Item>
 
         {form.getFieldValue('quantity') !== null && (
-          <Form.Item label="Quantity" name="quantity" style={{ width: '30rem' }} rules={[]}>
+          <Form.Item label="Quantity" name="quantity" style={{ width: '30rem' }}>
             <InputNumber min={0} style={{ width: '100%' }} />
           </Form.Item>
         )}
 
         {form.getFieldValue('location') !== null && (
-          <Form.Item label="Location" name="location" style={{ width: '30rem' }} rules={[]}>
+          <Form.Item label="Location" name="location" style={{ width: '30rem' }}>
             <Input placeholder="Enter car location" />
           </Form.Item>
         )}
 
-        <Form.Item name="available" valuePropName="checked" >
+        <Form.Item name="available" valuePropName="checked">
           <Checkbox>Available</Checkbox>
         </Form.Item>
 
@@ -209,9 +202,3 @@ function CarEditingPage() {
 }
 
 export default CarEditingPage;
-
-
- 
-
-{/* <input type="checkbox" name="available" checked={formData.available} onChange={handleInputChange} />
- */}

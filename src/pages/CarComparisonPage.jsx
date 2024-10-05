@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Select, Card, Row, Col, Table, Typography } from 'antd';
+import { Select, Card, Row, Col, Table, Typography, Button } from 'antd';
 import axios from 'axios';
-import '../styles/CarComparisonStyle.css'
+import { useNavigate } from 'react-router-dom';
+import '../styles/CarComparisonStyle.css';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -13,6 +14,7 @@ function CarComparisonPage() {
   const [selectedCar2, setSelectedCar2] = useState(null);
   const [car1Details, setCar1Details] = useState(null);
   const [car2Details, setCar2Details] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -46,6 +48,10 @@ function CarComparisonPage() {
     fetchCarDetails(carId, setCar2Details);
   };
 
+  const handleConfigureCar = (carId) => {
+    navigate(`/cars/${carId}/configure`);
+  };
+
   const comparisonData = [
     {
       key: 'Make',
@@ -68,19 +74,32 @@ function CarComparisonPage() {
       car2: car2Details?.car.engine || 'N/A',
     },
     {
-      key: 'Transmission',
-      car1: `${car1Details?.car.engineHorsepower} HP` ,
-      car2: `${car2Details?.car.engineHorsepower} HP`,
+      key: 'Horsepower',
+      car1: `${car1Details?.car.engineHorsepower} HP` || 'N/A',
+      car2: `${car2Details?.car.engineHorsepower} HP` || 'N/A',
     },
     {
       key: 'Transmission',
       car1: car1Details?.car.transmission || 'N/A',
       car2: car2Details?.car.transmission || 'N/A',
-    }, 
+    },
     {
       key: 'Price',
       car1: car1Details?.car.price ? `€${car1Details.car.price}` : 'N/A',
       car2: car2Details?.car.price ? `€${car2Details.car.price}` : 'N/A',
+    },
+    {
+      key: 'Configure',
+      car1: (
+        <Button type="primary" onClick={() => handleConfigureCar(selectedCar1)}>
+          Configure Car 1
+        </Button>
+      ),
+      car2: (
+        <Button type="primary" onClick={() => handleConfigureCar(selectedCar2)}>
+          Configure Car 2
+        </Button>
+      ),
     },
   ];
 
@@ -100,7 +119,7 @@ function CarComparisonPage() {
   ];
 
   return (
-    <div className="comparison-container" style={{width: '95vw'}}>
+    <div className="comparison-container" style={{ width: '95vw' }}>
       <Title level={2} className="comparison-title">Compare Cars</Title>
 
       <Row gutter={32} className="car-selectors">
@@ -160,6 +179,3 @@ function CarComparisonPage() {
 }
 
 export default CarComparisonPage;
-
-
-/* import '../styles/CarComparisonStyle.css' */

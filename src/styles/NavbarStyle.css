@@ -16,9 +16,9 @@
   }
   
   .navbar-center {
-    position: absolute; /* Position logo in the center */
+    position: absolute; 
     left: 50%;
-    transform: translateX(-50%); /* Center horizontally */
+    transform: translateX(-50%); 
   }
   
   .navbar-logo {

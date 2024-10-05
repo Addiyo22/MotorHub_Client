@@ -16,10 +16,8 @@ function CarCreationPage() {
     engine: '',
     engineHorsepower: '',
     transmission: '',
-    interiorColorName: '',
-    interiorColorHex: '',
-    exteriorColorName: '',
-    exteriorColorHex: '',
+    interiorColors: '',
+    exteriorColors: '',
     features: '',
     price: '',
     quantity: '',
@@ -54,8 +52,19 @@ function CarCreationPage() {
       engine: formData.engine.split(',').map((e) => e.trim()),
       transmission: formData.transmission.split(',').map((t) => t.trim()),
       engineHorsepower: formData.engineHorsepower.split(',').map((hp) => parseFloat(hp)),
-      interiorColor: [{ name: formData.interiorColorName, hex: formData.interiorColorHex }],
-      exteriorColor: [{ name: formData.exteriorColorName, hex: formData.exteriorColorHex }],
+
+      // Handling multiple interior colors
+      interiorColor: formData.interiorColors.split(',').map((color) => {
+        const [name, hex] = color.trim().split(':');
+        return { name: name.trim(), hex: hex.trim() };
+      }),
+
+      // Handling multiple exterior colors
+      exteriorColor: formData.exteriorColors.split(',').map((color) => {
+        const [name, hex] = color.trim().split(':');
+        return { name: name.trim(), hex: hex.trim() };
+      }),
+
       features: formData.features.split(',').map((f) => f.trim()),
     };
 
@@ -118,20 +127,12 @@ function CarCreationPage() {
           <Input name="transmission" value={formData.transmission} onChange={handleInputChange} />
         </Form.Item>
 
-        <Form.Item label="Interior Color Name" style={{ width: '30rem' }}>
-          <Input name="interiorColorName" value={formData.interiorColorName} onChange={handleInputChange} />
+        <Form.Item label="Interior Colors (comma-separated with name:hex format)" style={{ width: '30rem' }}>
+          <Input name="interiorColors" value={formData.interiorColors} onChange={handleInputChange} placeholder="e.g. Black:#000000, Red:#FF0000" />
         </Form.Item>
 
-        <Form.Item label="Interior Color Hex" style={{ width: '30rem' }}>
-          <Input name="interiorColorHex" value={formData.interiorColorHex} onChange={handleInputChange} />
-        </Form.Item>
-
-        <Form.Item label="Exterior Color Name" style={{ width: '30rem' }}>
-          <Input name="exteriorColorName" value={formData.exteriorColorName} onChange={handleInputChange} />
-        </Form.Item>
-
-        <Form.Item label="Exterior Color Hex" style={{ width: '30rem' }}>
-          <Input name="exteriorColorHex" value={formData.exteriorColorHex} onChange={handleInputChange} />
+        <Form.Item label="Exterior Colors (comma-separated with name:hex format)" style={{ width: '30rem' }}>
+          <Input name="exteriorColors" value={formData.exteriorColors} onChange={handleInputChange} placeholder="e.g. White:#FFFFFF, Blue:#0000FF" />
         </Form.Item>
 
         <Form.Item label="Features (comma-separated)" style={{ width: '30rem' }}>
